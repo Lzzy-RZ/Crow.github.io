@@ -1,0 +1,7 @@
+/* Keep article images at their natural aspect ratio even when the source HTML
+   includes explicit width and height attributes. */
+.markdown-body img {
+  height: auto !important;
+  max-width: 100%;
+  object-fit: contain !important;
+}
