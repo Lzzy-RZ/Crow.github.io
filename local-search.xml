@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>文件上传File Inclusion(local) 2026.10.21</title>
+    <link href="/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/"/>
+    <url>/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/</url>
+    
+    <content type="html"><![CDATA[<p>工具:Burpsuite,Curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件上传的漏洞</p><p>***仅个人学习,不针对任何网站和服务器</p><p>1,先打开Burpsuite用自带的浏览器进入我们的靶场<br><img width="1216" height="1259" alt="Image" src="https://github.com/user-attachments/assets/02de7cc3-1540-4f38-98ec-48acff7a803f" /><br>上面显示仅允许上传图片</p><p>2,打开burpsuite的intercept,上传一个.png图片,来看请求结构<br><img width="330" height="18" alt="Image" src="https://github.com/user-attachments/assets/fdddff79-8149-42bf-8423-05dc9a191604" /><br>确认浏览器按multipart接受文件</p><p>3,将文件改成.txt看服务器接不接受<br>将请求发送到repeater<br>将后缀.png改为.txt<br>Send<br>服务器返回200,说明拦截发生在浏览器,服务器没拦</p><p>4,验证文件是否可以打开<br><img width="242" height="38" alt="Image" src="https://github.com/user-attachments/assets/f786b0f5-7f8b-4110-8502-b7bb9be2d021" /><br>刷新后网页上给出了保存路径<br>直接复制访问文件是否可以打开<br><img width="1217" height="1324" alt="Image" src="https://github.com/user-attachments/assets/9e15f11c-fe94-4e94-aa92-c7a04157949c" /><br>成功地返回了我们发送的图片(说明服务器并未对上传的文件类型进行限制)</p><p>5,我们进一步确认服务器是否真正的能够执行我们上传的代码<br>新建一个写入了php代码的文件(命名为proof.php)<br>文件内容为:<?php echo "UPLOAD_PROOF_OK"; ?>(如果服务器成功执行,会向我们返回UPLOAD_PROOF_OK)<br>打开终端,使用Curl直接向服务器发送我们的.php文件<br>curl -i -F “uploadfile&#x3D;@$HOME&#x2F;Desktop&#x2F;proof.php;filename&#x3D;proof.php” \  <a href="http://127.0.0.1:8080/vul/unsafeupload/clientcheck.php">http://127.0.0.1:8080/vul/unsafeupload/clientcheck.php</a><br>最后根据ctrl+shift+F的功能,在终端中找到了文件保存的路径<br><img width="1209" height="128" alt="Image" src="https://github.com/user-attachments/assets/94be5dc8-bcdc-4cef-b0ea-8864ed128691" /><br>访问后得到了结果(说明服务器可以执行我们上传的内容)<br>即我们可用服务器不对上传文件验证的漏洞,向服务器发送指令,使之执行.</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>我的第一篇CTF文章</title>
     <link href="/Crow.github.io/2026/10/21/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87CTF%E6%96%87%E7%AB%A0/"/>
     <url>/Crow.github.io/2026/10/21/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87CTF%E6%96%87%E7%AB%A0/</url>
