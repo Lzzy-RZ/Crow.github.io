@@ -412,7 +412,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/" target="_self">
         <div>
-          工具:curl 环境:本地 Pikachu 靶场 内容:验证getimagesize可绕过 原理:getimagesize() 的核心是：不相信文件名,也不相信 Content-Type,而是自己读文件内容.服务器会把上传后的临时文件交给它，它会去找图片的真实结构,如果把一个真正的 PNG 放在前面，再在尾部塞一段 PHP，就可能做成“图片马”，让图片检查通过、PHP 也跟着落盘 ***仅个人学习
+          ⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。  工具： curl环境： 本地 Pikachu 靶场目标： 验证 getimagesize() 图片检查能否被绕过 漏洞原理getimagesize() 不依赖文件名，也不依赖 Content-Type，而是直接读取文件内容，检查它是不是一张有效图片。 如果把一张真正的 PNG 放在文件前面，再在文件尾部追加一段 PHP 代码
         </div>
       </a>
 
@@ -479,7 +479,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0MIME-Type/" target="_self">
         <div>
-          工具:Burpsuite 环境:本地 Pikachu 靶场 内容:挖掘文件上传MIME Type的漏洞 原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理，但不一定代表里面真的是什么. ***仅个人学习,不针对任何网站和服务器 1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite 2,打开Burpsuite的i
+          ⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。  工具： Burp Suite环境： 本地 Pikachu 靶场目标： 验证服务器是否信任客户端填写的 MIME 类型 漏洞原理MIME 就像快递箱上的标签，可以标注箱子里装的是什么。但是这个标签由客户端填写，不能完全相信。 如果服务器只相信请求里的 Content-Type，就可能把 PHP 文件当成图片接收。 操作步骤1.
         </div>
       </a>
 
@@ -546,7 +546,7 @@
       
       <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/" target="_self">
         <div>
-          工具:Burpsuite,Curl 环境:本地 Pikachu 靶场 内容:挖掘文件上传client check的漏洞 原理:用户选择文件时,会检查文件扩展名,选择其他类型文件时,浏览器的JS就已经拦截了(请求没发送出去),所以采用用图片后缀的方式,绕过浏览器的拦截,让它成功发送请求.我们拦截发送的请求,并将伪装过的文件换回原来的后缀,发送给服务器.如果服务器没有拦截,并且能执行我们上传的代码,说
+          ⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。  工具： Burp Suite、curl环境： 本地 Pikachu 靶场目标： 验证文件上传客户端（前端）校验绕过 漏洞原理用户选择文件时，浏览器会检查文件扩展名。选择其他类型的文件时，前端 JavaScript 会直接拦截，请求不会发送出去。 因此可以先用图片后缀让请求成功发出，再在 Burp 中把文件名改回原来的后缀。如
         </div>
       </a>
 
