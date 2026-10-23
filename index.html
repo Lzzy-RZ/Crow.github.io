@@ -337,15 +337,59 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0MIME-Type/" target="_self">
+          文件上传(MIME Type)
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0MIME-Type/" target="_self">
+        <div>
+          工具:Burpsuite 环境:本地 Pikachu 靶场 内容:挖掘文件上传MIME Type的漏洞 原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理，但不一定代表里面真的是什么. ***仅个人学习,不针对任何网站和服务器 1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite 2,打开Burpsuite的i
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-10-23 12:02" pubdate>
+              2026-10-23
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">#文件上传</a>
+            
+              <a href="/Crow.github.io/tags/Pikachu/">#Pikachu</a>
+            
+              <a href="/Crow.github.io/tags/Burp-Suite/">#Burp Suite</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/" target="_self">
-          文件上传File Inclusion(local) 2026.10.21
+          文件上传(client check)
         </a>
       </h2>
 
       
       <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/" target="_self">
         <div>
-          工具:Burpsuite,Curl 环境:本地 Pikachu 靶场 内容:挖掘文件上传的漏洞 ***仅个人学习,不针对任何网站和服务器 1,先打开Burpsuite用自带的浏览器进入我们的靶场		上面显示仅允许上传图片 2,打开burpsuite的intercept,上传一个.png图片,来看请求结构		确认浏览器按multipart接受文件 3,将文件改成.txt看服务器接不接受	将请求发送到
+          工具:Burpsuite,Curl 环境:本地 Pikachu 靶场 内容:挖掘文件上传client check的漏洞 原理:用户选择文件时,会检查文件扩展名,选择其他类型文件时,浏览器的JS就已经拦截了(请求没发送出去),所以采用用图片后缀的方式,绕过浏览器的拦截,让它成功发送请求.我们拦截发送的请求,并将伪装过的文件换回原来的后缀,发送给服务器.如果服务器没有拦截,并且能执行我们上传的代码,说
         </div>
       </a>
 
@@ -360,71 +404,18 @@
         
         
         
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/Crow.github.io/2026/10/21/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87CTF%E6%96%87%E7%AB%A0/" target="_self">
-          我的第一篇CTF文章
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/21/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87CTF%E6%96%87%E7%AB%A0/" target="_self">
-        <div>
-          
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2026-10-21 14:15" pubdate>
-              2026-10-21
-            </time>
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">#文件上传</a>
+            
+              <a href="/Crow.github.io/tags/Pikachu/">#Pikachu</a>
+            
+              <a href="/Crow.github.io/tags/Burp-Suite/">#Burp Suite</a>
+            
+              <a href="/Crow.github.io/tags/Curl/">#Curl</a>
+            
           </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/Crow.github.io/2026/10/21/hello-world/" target="_self">
-          Hello World
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/21/hello-world/" target="_self">
-        <div>
-          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2026-10-21 14:11" pubdate>
-              2026-10-21
-            </time>
-          </div>
-        
-        
         
       </div>
     </article>
