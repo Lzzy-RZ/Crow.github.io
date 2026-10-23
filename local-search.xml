@@ -4,6 +4,37 @@
   
   
   <entry>
+    <title>文件上传(getimagesize)</title>
+    <link href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/"/>
+    <url>/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/</url>
+    
+    <content type="html"><![CDATA[<p>工具:curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:验证getimagesize可绕过</p><p>原理:getimagesize() 的核心是：不相信文件名,也不相信 Content-Type,而是自己读文件内容.服务器会把上传后的临时文件交给它，它会去找图片的真实结构,如果把一个真正的 PNG 放在前面，再在尾部塞一段 PHP，就可能做成“图片马”，让图片检查通过、PHP 也跟着落盘</p><p>***仅个人学习,不针对任何网站和服务器</p><p>1,进入本地靶场<br><img width="1544" height="1322" alt="Image" src="https://github.com/user-attachments/assets/a6fc5526-c81a-4c40-993b-e1fd6c7ae7d4" /></p><p>2,制作图片马<br>终端运行–&gt;kb_path&#x3D;”$(find “$HOME” -type f -iname ‘kb.png’ -print -quit)”<br>cp – “$kb_path” “$HOME&#x2F;Desktop&#x2F;gis_kb_probe.png”<br>printf ‘\n<?php echo "GETIMAGESIZE_OK"; ?>\n’ &gt;&gt; “$HOME&#x2F;Desktop&#x2F;gis_kb_probe.png”<br>file “$HOME&#x2F;Desktop&#x2F;gis_kb_probe.png”<br>复制那张 kb.png，再往尾部追加测试标记<br>代码解读:<br>_path–&gt;路径<br>find–&gt;找到kb.png<br>cp–&gt;复制成测试文件<br>printf &gt;&gt; –&gt;在文件尾部加上php代码<br>这时文件仍然是 PNG，前面的图片数据没有变化，只是在尾部长出了一小段 PHP 文本</p><p>3,上传图片马<br><img width="1542" height="1426" alt="Image" src="https://github.com/user-attachments/assets/ab92c5ee-e736-4d8a-87e7-604607c1e32c" /></p><p>4,验证<br>终端运行–&gt; curl -s ‘<a href="http://127.0.0.1:8080/vul/unsafeupload/uploads/2026/10/23/9209656adaf24988ddd610297742.png">http://127.0.0.1:8080/vul/unsafeupload/uploads/2026/10/23/9209656adaf24988ddd610297742.png</a>‘ | strings | grep GETIMAGESIZE_OK<br>代码解读:<br>curl–&gt;发送http请求,这里用get下载文件<br>-s –&gt;隐藏下载进度和普通错误信息<br>|：管道，把前一条命令的输出交给后一条命令<br>strings：从二进制文件中提取连续的可打印字符<br>PNG 的大部分内容是二进制数据，直接看会是一堆乱码。但文件尾部追加的：<?php echo "GETIMAGESIZE_OK"; ?>是可读文本，所以 strings 能把它捞出来.<br>grep：在一段文字中搜索指定内容<br>GETIMAGESIZE_OK：只保留包含这个标记的行<br>最后返回了完整的代码<br><img width="1684" height="188" alt="Image" src="https://github.com/user-attachments/assets/a2d10c2d-8599-47ad-937c-570433be807f" /></p><p>说明getmagesize被绕过了，但随机改名和 .png 后缀把攻击链后半截截断了</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>文件上传</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>文件上传</tag>
+      
+      <tag>Pikachu</tag>
+      
+      <tag>Curl</tag>
+      
+      <tag>getimagesize</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>文件上传(MIME Type)</title>
     <link href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0MIME-Type/"/>
     <url>/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0MIME-Type/</url>
@@ -25,6 +56,8 @@
       <tag>Pikachu</tag>
       
       <tag>Burp Suite</tag>
+      
+      <tag>MIME</tag>
       
     </tags>
     
