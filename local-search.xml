@@ -4,6 +4,37 @@
   
   
   <entry>
+    <title>一句话木马小专栏</title>
+    <link href="/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <url>/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/</url>
+    
+    <content type="html"><![CDATA[<blockquote><p>⚠️ 声明：本文涉及的技术仅供网络安全学习与授权测试（如 CTF 靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律。</p></blockquote><p>今天时间充足，效率也不错，在这里梳理一下一句话木马的使用方法，以及如何防守。</p><h2 id="什么是一句话木马"><a href="#什么是一句话木马" class="headerlink" title="什么是一句话木马"></a>什么是一句话木马</h2><p>本质是一段极其简单的恶意脚本。以 PHP 为例，最经典的一句话木马如下：</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>逐词解析：</p><ul><li><code>&lt;?php ... ?&gt;</code>：标识符，告诉服务器中间的内容要当作 PHP 代码执行。</li><li><code>system(...)</code>：PHP 的内置函数，作用是执行系统底层命令。</li><li><code>$_GET[&#39;cmd&#39;]</code>：接收 URL 中名为 <code>cmd</code> 的参数。</li></ul><p>总结：它就像遥控器一样，通过 URL 传入名为 <code>cmd</code> 的命令，让服务器执行对应操作。</p><h2 id="关键-1：找到地址"><a href="#关键-1：找到地址" class="headerlink" title="关键 1：找到地址"></a>关键 1：找到地址</h2><p><strong>为什么：</strong> 上传一句话木马后，文件还需要通过正确的 URL 访问，服务器才会解析并执行其中的代码。</p><p><strong>怎么做：</strong> 真实环境中，服务器通常会重命名或移动上传文件。可以通过上传结果、报错回显或目录扫描确认可访问的 URL。错误路径通常返回 <code>404</code>，正确路径可能返回 <code>200</code>。</p><blockquote><p>当前这些内容还是在靶场里学习，真实环境的路径定位我还不会，keep going！</p></blockquote><h2 id="关键-2：测试权限"><a href="#关键-2：测试权限" class="headerlink" title="关键 2：测试权限"></a>关键 2：测试权限</h2><p>使用 <code>?cmd=whoami</code> 测试，成功后会返回当前 Web 服务的用户名。</p><ul><li><code>www-data</code>、<code>apache</code>、<code>nginx</code>：Web 服务的普通权限，是大多数漏洞拿到的权限。</li><li><code>root</code>：最高权限，可以控制系统中的更多内容。</li></ul><h2 id="关键-3：调用指令"><a href="#关键-3：调用指令" class="headerlink" title="关键 3：调用指令"></a>关键 3：调用指令</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">?cmd=ls /<br>?cmd=ls<br>?cmd=cat /flag.txt<br></code></pre></td></tr></table></figure><p>分别用于查看根目录、查看当前目录，以及读取找到的文件。</p><p>在 CTF 中，如果页面直接输出为空白，可以先让命令对输出做 Base64 编码，再在本地解码：</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">?cmd=base64 /flag_xxx.php<br></code></pre></td></tr></table></figure><h2 id="关键-4：防守策略"><a href="#关键-4：防守策略" class="headerlink" title="关键 4：防守策略"></a>关键 4：防守策略</h2><ol><li>禁用不必要的高危函数，并让 Web 服务使用最小权限运行。</li><li>在服务端严格校验上传文件，包括 MIME 类型、文件后缀和文件头，不能只依赖前端检查。</li><li>对上传文件随机重命名，并禁止上传目录执行 PHP 等脚本。</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>文件上传</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>文件上传</tag>
+      
+      <tag>CTF</tag>
+      
+      <tag>Web</tag>
+      
+      <tag>WebShell</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>文件上传(getimagesize)</title>
     <link href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/"/>
     <url>/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/</url>
