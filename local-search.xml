@@ -11,6 +11,12 @@
     <content type="html"><![CDATA[<p>工具:Burpsuite</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件上传MIME Type的漏洞</p><p>原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理，但不一定代表里面真的是什么.</p><p>***仅个人学习,不针对任何网站和服务器</p><p>1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite</p><p>2,打开Burpsuite的intercept,上传我们的proof.php文件<br>但是一直无法抓到包,所以改用了Burp自带的浏览器<br>这一次很成功的拦截到了<br><img width="1314" height="632" alt="Image" src="https://github.com/user-attachments/assets/117a54aa-fcce-40f3-889e-1caf9327b3b3" /></p><p>3,找到包里的Content-Type<br><img width="614" height="42" alt="Image" src="https://github.com/user-attachments/assets/b6573aae-0bd9-4da9-81bd-a2383d6e7bcf" /><br>我们将这里的Content-Type改为image&#x2F;png  并将请求放行</p><p>4,页面上给出了文件的保存路径,访问<br><img width="1134" height="570" alt="Image" src="https://github.com/user-attachments/assets/eea3d884-c483-4ad1-bdf5-6f07c6e0843b" /><br>访问路径,看到了我们让服务器输出的文字<br><img width="1134" height="918" alt="Image" src="https://github.com/user-attachments/assets/a58c3ae7-28c8-4467-af99-2cf04aab4d6a" /></p><p>说明服务器相信了客户端自己填写的 MIME<br>proof.php 能执行也说明上传目录没禁 PHP</p>]]></content>
     
     
+    <categories>
+      
+      <category>文件上传</category>
+      
+    </categories>
+    
     
     <tags>
       
@@ -33,6 +39,12 @@
     
     <content type="html"><![CDATA[<p>工具:Burpsuite,Curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件上传client check的漏洞</p><p>原理:用户选择文件时,会检查文件扩展名,选择其他类型文件时,浏览器的JS就已经拦截了(请求没发送出去),所以采用用图片后缀的方式,绕过浏览器的拦截,让它成功发送请求.我们拦截发送的请求,并将伪装过的文件换回原来的后缀,发送给服务器.如果服务器没有拦截,并且能执行我们上传的代码,说明改服务器可被控制.</p><p>***仅个人学习,不针对任何网站和服务器</p><p>1,先打开Burpsuite用自带的浏览器进入我们的靶场<br><img width="1216" height="1259" alt="Image" src="https://github.com/user-attachments/assets/02de7cc3-1540-4f38-98ec-48acff7a803f" /><br>上面显示仅允许上传图片</p><p>2,打开burpsuite的intercept,上传一个.png图片,来看请求结构<br><img width="330" height="18" alt="Image" src="https://github.com/user-attachments/assets/fdddff79-8149-42bf-8423-05dc9a191604" /><br>确认浏览器按multipart接受文件</p><p>3,将文件改成.txt看服务器接不接受<br>将请求发送到repeater<br>将后缀.png改为.txt<br>Send<br>服务器返回200,说明拦截发生在浏览器,服务器没拦</p><p>4,验证文件是否可以打开<br><img width="242" height="38" alt="Image" src="https://github.com/user-attachments/assets/f786b0f5-7f8b-4110-8502-b7bb9be2d021" /><br>刷新后网页上给出了保存路径<br>直接复制访问文件是否可以打开<br><img width="1217" height="1324" alt="Image" src="https://github.com/user-attachments/assets/9e15f11c-fe94-4e94-aa92-c7a04157949c" /><br>成功地返回了我们发送的图片(说明服务器并未对上传的文件类型进行限制)</p><p>5,我们进一步确认服务器是否真正的能够执行我们上传的代码<br>新建一个写入了php代码的文件(命名为proof.php)<br>文件内容为:<?php echo "UPLOAD_PROOF_OK"; ?>(如果服务器成功执行,会向我们返回UPLOAD_PROOF_OK)<br>打开终端,使用Curl直接向服务器发送我们的.php文件<br>curl -i -F “uploadfile&#x3D;@$HOME&#x2F;Desktop&#x2F;proof.php;filename&#x3D;proof.php” \  <a href="http://127.0.0.1:8080/vul/unsafeupload/clientcheck.php">http://127.0.0.1:8080/vul/unsafeupload/clientcheck.php</a><br>最后根据ctrl+shift+F的功能,在终端中找到了文件保存的路径<br><img width="1209" height="128" alt="Image" src="https://github.com/user-attachments/assets/94be5dc8-bcdc-4cef-b0ea-8864ed128691" /><br>访问后得到了结果(说明服务器可以执行我们上传的内容)<br>即我们可用服务器不对上传文件验证的漏洞,向服务器发送指令,使之执行.</p>]]></content>
     
+    
+    <categories>
+      
+      <category>文件上传</category>
+      
+    </categories>
     
     
     <tags>
