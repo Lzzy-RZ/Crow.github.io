@@ -19,19 +19,19 @@
   <meta name="author" content="Crow.">
   <meta name="keywords" content="">
   
-    <meta name="description" content="工具： Burp Suite环境： 本地 Pikachu 靶场目标： 验证服务器是否信任客户端填写的 MIME 类型 漏洞原理MIME 就像快递箱上的标签，可以标注箱子里装的是什么。但是这个标签由客户端填写，不能完全相信。 如果服务器只相信请求里的 Content-Type，就可能把 PHP 文件当成图片接收。 操作步骤1. 打开靶场并拦截请求使用火狐浏览器打开本地 Pikachu 靶场，并启动">
+    <meta name="description" content="工具:Burpsuite 环境:本地 Pikachu 靶场 内容:挖掘文件上传MIME Type的漏洞 原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理，但不一定代表里面真的是什么. 1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite2,打开Burpsuite的intercept,上传我们的proof.ph">
 <meta property="og:type" content="article">
 <meta property="og:title" content="文件上传(MIME Type)">
 <meta property="og:url" content="https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0MIME-Type/index.html">
 <meta property="og:site_name" content="Crow.">
-<meta property="og:description" content="工具： Burp Suite环境： 本地 Pikachu 靶场目标： 验证服务器是否信任客户端填写的 MIME 类型 漏洞原理MIME 就像快递箱上的标签，可以标注箱子里装的是什么。但是这个标签由客户端填写，不能完全相信。 如果服务器只相信请求里的 Content-Type，就可能把 PHP 文件当成图片接收。 操作步骤1. 打开靶场并拦截请求使用火狐浏览器打开本地 Pikachu 靶场，并启动">
+<meta property="og:description" content="工具:Burpsuite 环境:本地 Pikachu 靶场 内容:挖掘文件上传MIME Type的漏洞 原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理，但不一定代表里面真的是什么. 1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite2,打开Burpsuite的intercept,上传我们的proof.ph">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://github.com/user-attachments/assets/117a54aa-fcce-40f3-889e-1caf9327b3b3">
 <meta property="og:image" content="https://github.com/user-attachments/assets/b6573aae-0bd9-4da9-81bd-a2383d6e7bcf">
 <meta property="og:image" content="https://github.com/user-attachments/assets/eea3d884-c483-4ad1-bdf5-6f07c6e0843b">
 <meta property="og:image" content="https://github.com/user-attachments/assets/a58c3ae7-28c8-4467-af99-2cf04aab4d6a">
 <meta property="article:published_time" content="2026-10-23T04:02:07.000Z">
-<meta property="article:modified_time" content="2026-10-23T08:13:27.613Z">
+<meta property="article:modified_time" content="2026-10-23T08:31:54.069Z">
 <meta property="article:author" content="Crow.">
 <meta property="article:tag" content="Burp Suite">
 <meta property="article:tag" content="MIME">
@@ -338,7 +338,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          485 words
+          392 words
         
       </span>
     
@@ -349,7 +349,7 @@
         
         
         
-          5 mins
+          4 mins
         
       </span>
     
@@ -393,31 +393,25 @@
             
               <div class="markdown-body">
                 
-                <p><strong>工具：</strong> Burp Suite<br><strong>环境：</strong> 本地 Pikachu 靶场<br><strong>目标：</strong> 验证服务器是否信任客户端填写的 MIME 类型</p>
-<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>MIME 就像快递箱上的标签，可以标注箱子里装的是什么。但是这个标签由客户端填写，不能完全相信。</p>
-<p>如果服务器只相信请求里的 <code>Content-Type</code>，就可能把 PHP 文件当成图片接收。</p>
-<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><h3 id="1-打开靶场并拦截请求"><a href="#1-打开靶场并拦截请求" class="headerlink" title="1. 打开靶场并拦截请求"></a>1. 打开靶场并拦截请求</h3><p>使用火狐浏览器打开本地 Pikachu 靶场，并启动 Burp Suite。</p>
-<p>原计划使用火狐浏览器上传 <code>proof.php</code>，但一直无法抓到包，所以改用了 Burp Suite 自带的浏览器。这次成功拦截到了上传请求。</p>
-<img width="1314" height="632" alt="拦截到的上传请求" src="https://github.com/user-attachments/assets/117a54aa-fcce-40f3-889e-1caf9327b3b3" srcset="/Crow.github.io/img/loading.gif" lazyload />
+                <p>工具:Burpsuite</p>
+<p>环境:本地 Pikachu 靶场</p>
+<p>内容:挖掘文件上传MIME Type的漏洞</p>
+<p>原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理，但不一定代表里面真的是什么.</p>
+<h2 id="1-使用火狐浏览器打开本地的皮卡丘靶场-打开Burpsuite"><a href="#1-使用火狐浏览器打开本地的皮卡丘靶场-打开Burpsuite" class="headerlink" title="1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite"></a>1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite</h2><h2 id="2-打开Burpsuite的intercept-上传我们的proof-php文件"><a href="#2-打开Burpsuite的intercept-上传我们的proof-php文件" class="headerlink" title="2,打开Burpsuite的intercept,上传我们的proof.php文件"></a>2,打开Burpsuite的intercept,上传我们的proof.php文件</h2><p>但是一直无法抓到包,所以改用了Burp自带的浏览器</p>
+<p>这一次很成功的拦截到了</p>
+<img width="1314" height="632" alt="Image" src="https://github.com/user-attachments/assets/117a54aa-fcce-40f3-889e-1caf9327b3b3" srcset="/Crow.github.io/img/loading.gif" lazyload />
 
-<h3 id="2-修改-Content-Type"><a href="#2-修改-Content-Type" class="headerlink" title="2. 修改 Content-Type"></a>2. 修改 Content-Type</h3><p>在拦截到的请求中找到 <code>Content-Type</code> 字段：</p>
-<img width="614" height="42" alt="请求中的 Content-Type" src="https://github.com/user-attachments/assets/b6573aae-0bd9-4da9-81bd-a2383d6e7bcf" srcset="/Crow.github.io/img/loading.gif" lazyload />
+<h2 id="3-找到包里的Content-Type"><a href="#3-找到包里的Content-Type" class="headerlink" title="3,找到包里的Content-Type"></a>3,找到包里的Content-Type</h2><img width="614" height="42" alt="Image" src="https://github.com/user-attachments/assets/b6573aae-0bd9-4da9-81bd-a2383d6e7bcf" srcset="/Crow.github.io/img/loading.gif" lazyload />
 
-<p>将文件对应的 <code>Content-Type</code> 修改为：</p>
-<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs http"><span class="hljs-attribute">Content-Type</span><span class="hljs-punctuation">: </span>image/png<br></code></pre></td></tr></table></figure>
+<p>我们将这里的Content-Type改为image&#x2F;png  并将请求放行</p>
+<h2 id="4-页面上给出了文件的保存路径-访问"><a href="#4-页面上给出了文件的保存路径-访问" class="headerlink" title="4,页面上给出了文件的保存路径,访问"></a>4,页面上给出了文件的保存路径,访问</h2><img width="1134" height="570" alt="Image" src="https://github.com/user-attachments/assets/eea3d884-c483-4ad1-bdf5-6f07c6e0843b" srcset="/Crow.github.io/img/loading.gif" lazyload />
 
-<p>然后放行请求。</p>
-<h3 id="3-访问上传结果"><a href="#3-访问上传结果" class="headerlink" title="3. 访问上传结果"></a>3. 访问上传结果</h3><p>页面给出了文件的保存路径。</p>
-<img width="1134" height="570" alt="上传后的文件保存路径" src="https://github.com/user-attachments/assets/eea3d884-c483-4ad1-bdf5-6f07c6e0843b" srcset="/Crow.github.io/img/loading.gif" lazyload />
+<p>访问路径,看到了我们让服务器输出的文字</p>
+<img width="1134" height="918" alt="Image" src="https://github.com/user-attachments/assets/a58c3ae7-28c8-4467-af99-2cf04aab4d6a" srcset="/Crow.github.io/img/loading.gif" lazyload />
 
-<p>访问这个路径后，看到了服务器输出给我们的文字。</p>
-<img width="1134" height="918" alt="PHP 文件成功执行" src="https://github.com/user-attachments/assets/a58c3ae7-28c8-4467-af99-2cf04aab4d6a" srcset="/Crow.github.io/img/loading.gif" lazyload />
-
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>服务器相信了客户端自己填写的 MIME 类型。<code>proof.php</code> 能够执行，也说明上传目录没有禁止执行 PHP。</p>
+<p>说明服务器相信了客户端自己填写的 MIME<br>proof.php 能执行也说明上传目录没禁 PHP</p>
 <hr>
-<blockquote>
-<p>⚠️ <strong>免责声明：</strong> 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。</p>
-</blockquote>
+<p>***仅个人学习,不针对任何网站和服务器</p>
 
                 
               </div>
