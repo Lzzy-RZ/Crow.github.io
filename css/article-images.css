@@ -5,3 +5,14 @@
   max-width: 100%;
   object-fit: contain !important;
 }
+
+/* Keep each homepage slogan line centered without the typing cursor shifting it. */
+#subtitle {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+#subtitle .typed-cursor {
+  display: none !important;
+}
