@@ -19,18 +19,18 @@
   <meta name="author" content="Crow.">
   <meta name="keywords" content="">
   
-    <meta name="description" content="⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。  工具： curl环境： 本地 Pikachu 靶场目标： 验证 getimagesize() 图片检查能否被绕过 漏洞原理getimagesize() 不依赖文件名，也不依赖 Content-Type，而是直接读取文件内容，检查它是不是一张有效图片。 如果把一张真正的 PNG 放在文件前面，再在文件尾部追加一段 PHP 代码">
+    <meta name="description" content="工具： curl环境： 本地 Pikachu 靶场目标： 验证 getimagesize() 图片检查能否被绕过 漏洞原理getimagesize() 不依赖文件名，也不依赖 Content-Type，而是直接读取文件内容，检查它是不是一张有效图片。 如果把一张真正的 PNG 放在文件前面，再在文件尾部追加一段 PHP 代码，就可能制作出“图片马”：图片检查能够通过，PHP 代码也一起被保存到服务">
 <meta property="og:type" content="article">
 <meta property="og:title" content="文件上传(getimagesize)">
 <meta property="og:url" content="https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/index.html">
 <meta property="og:site_name" content="Crow.">
-<meta property="og:description" content="⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。  工具： curl环境： 本地 Pikachu 靶场目标： 验证 getimagesize() 图片检查能否被绕过 漏洞原理getimagesize() 不依赖文件名，也不依赖 Content-Type，而是直接读取文件内容，检查它是不是一张有效图片。 如果把一张真正的 PNG 放在文件前面，再在文件尾部追加一段 PHP 代码">
+<meta property="og:description" content="工具： curl环境： 本地 Pikachu 靶场目标： 验证 getimagesize() 图片检查能否被绕过 漏洞原理getimagesize() 不依赖文件名，也不依赖 Content-Type，而是直接读取文件内容，检查它是不是一张有效图片。 如果把一张真正的 PNG 放在文件前面，再在文件尾部追加一段 PHP 代码，就可能制作出“图片马”：图片检查能够通过，PHP 代码也一起被保存到服务">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://github.com/user-attachments/assets/a6fc5526-c81a-4c40-993b-e1fd6c7ae7d4">
 <meta property="og:image" content="https://github.com/user-attachments/assets/ab92c5ee-e736-4d8a-87e7-604607c1e32c">
 <meta property="og:image" content="https://github.com/user-attachments/assets/a2d10c2d-8599-47ad-937c-570433be807f">
 <meta property="article:published_time" content="2026-10-23T05:49:35.000Z">
-<meta property="article:modified_time" content="2026-10-23T07:58:08.982Z">
+<meta property="article:modified_time" content="2026-10-23T08:13:29.836Z">
 <meta property="article:author" content="Crow.">
 <meta property="article:tag" content="Curl">
 <meta property="article:tag" content="Pikachu">
@@ -392,10 +392,7 @@
             
               <div class="markdown-body">
                 
-                <blockquote>
-<p>⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。</p>
-</blockquote>
-<p><strong>工具：</strong> curl<br><strong>环境：</strong> 本地 Pikachu 靶场<br><strong>目标：</strong> 验证 <code>getimagesize()</code> 图片检查能否被绕过</p>
+                <p><strong>工具：</strong> curl<br><strong>环境：</strong> 本地 Pikachu 靶场<br><strong>目标：</strong> 验证 <code>getimagesize()</code> 图片检查能否被绕过</p>
 <h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p><code>getimagesize()</code> 不依赖文件名，也不依赖 <code>Content-Type</code>，而是直接读取文件内容，检查它是不是一张有效图片。</p>
 <p>如果把一张真正的 PNG 放在文件前面，再在文件尾部追加一段 PHP 代码，就可能制作出“图片马”：图片检查能够通过，PHP 代码也一起被保存到服务器上。</p>
 <h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><h3 id="1-进入本地靶场"><a href="#1-进入本地靶场" class="headerlink" title="1. 进入本地靶场"></a>1. 进入本地靶场</h3><img width="1544" height="1322" alt="Pikachu 文件上传页面" src="https://github.com/user-attachments/assets/a6fc5526-c81a-4c40-993b-e1fd6c7ae7d4" srcset="/Crow.github.io/img/loading.gif" lazyload />
@@ -427,6 +424,10 @@
 <img width="1684" height="188" alt="成功提取到 PHP 测试标记" src="https://github.com/user-attachments/assets/a2d10c2d-8599-47ad-937c-570433be807f" srcset="/Crow.github.io/img/loading.gif" lazyload />
 
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p><code>getimagesize()</code> 检查被图片头和尾部追加的 PHP 代码绕过了。不过服务器随机重命名文件，并保留了 <code>.png</code> 后缀，PHP 代码不会按脚本执行，所以这条攻击链的后半段没有被接通。</p>
+<hr>
+<blockquote>
+<p>⚠️ <strong>免责声明：</strong> 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。</p>
+</blockquote>
 
                 
               </div>

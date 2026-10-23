@@ -19,12 +19,12 @@
   <meta name="author" content="Crow.">
   <meta name="keywords" content="">
   
-    <meta name="description" content="⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。  工具： Burp Suite、curl环境： 本地 Pikachu 靶场目标： 验证文件上传客户端（前端）校验绕过 漏洞原理用户选择文件时，浏览器会检查文件扩展名。选择其他类型的文件时，前端 JavaScript 会直接拦截，请求不会发送出去。 因此可以先用图片后缀让请求成功发出，再在 Burp 中把文件名改回原来的后缀。如">
+    <meta name="description" content="工具： Burp Suite、curl环境： 本地 Pikachu 靶场目标： 验证文件上传客户端（前端）校验绕过 漏洞原理用户选择文件时，浏览器会检查文件扩展名。选择其他类型的文件时，前端 JavaScript 会直接拦截，请求不会发送出去。 因此可以先用图片后缀让请求成功发出，再在 Burp 中把文件名改回原来的后缀。如果服务器没有再次校验，而且上传目录能够执行 PHP 代码，就说明服务器可能">
 <meta property="og:type" content="article">
 <meta property="og:title" content="文件上传(client check)">
 <meta property="og:url" content="https://lzzy-rz.github.io/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/index.html">
 <meta property="og:site_name" content="Crow.">
-<meta property="og:description" content="⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。  工具： Burp Suite、curl环境： 本地 Pikachu 靶场目标： 验证文件上传客户端（前端）校验绕过 漏洞原理用户选择文件时，浏览器会检查文件扩展名。选择其他类型的文件时，前端 JavaScript 会直接拦截，请求不会发送出去。 因此可以先用图片后缀让请求成功发出，再在 Burp 中把文件名改回原来的后缀。如">
+<meta property="og:description" content="工具： Burp Suite、curl环境： 本地 Pikachu 靶场目标： 验证文件上传客户端（前端）校验绕过 漏洞原理用户选择文件时，浏览器会检查文件扩展名。选择其他类型的文件时，前端 JavaScript 会直接拦截，请求不会发送出去。 因此可以先用图片后缀让请求成功发出，再在 Burp 中把文件名改回原来的后缀。如果服务器没有再次校验，而且上传目录能够执行 PHP 代码，就说明服务器可能">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://github.com/user-attachments/assets/02de7cc3-1540-4f38-98ec-48acff7a803f">
 <meta property="og:image" content="https://github.com/user-attachments/assets/fdddff79-8149-42bf-8423-05dc9a191604">
@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://github.com/user-attachments/assets/9e15f11c-fe94-4e94-aa92-c7a04157949c">
 <meta property="og:image" content="https://github.com/user-attachments/assets/94be5dc8-bcdc-4cef-b0ea-8864ed128691">
 <meta property="article:published_time" content="2026-10-21T09:54:37.000Z">
-<meta property="article:modified_time" content="2026-10-23T07:58:04.477Z">
+<meta property="article:modified_time" content="2026-10-23T08:13:25.529Z">
 <meta property="article:author" content="Crow.">
 <meta property="article:tag" content="Burp Suite">
 <meta property="article:tag" content="Curl">
@@ -339,7 +339,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          918 words
+          923 words
         
       </span>
     
@@ -394,10 +394,7 @@
             
               <div class="markdown-body">
                 
-                <blockquote>
-<p>⚠️ 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。</p>
-</blockquote>
-<p><strong>工具：</strong> Burp Suite、curl<br><strong>环境：</strong> 本地 Pikachu 靶场<br><strong>目标：</strong> 验证文件上传客户端（前端）校验绕过</p>
+                <p><strong>工具：</strong> Burp Suite、curl<br><strong>环境：</strong> 本地 Pikachu 靶场<br><strong>目标：</strong> 验证文件上传客户端（前端）校验绕过</p>
 <h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>用户选择文件时，浏览器会检查文件扩展名。选择其他类型的文件时，前端 JavaScript 会直接拦截，请求不会发送出去。</p>
 <p>因此可以先用图片后缀让请求成功发出，再在 Burp 中把文件名改回原来的后缀。如果服务器没有再次校验，而且上传目录能够执行 PHP 代码，就说明服务器可能被控制。</p>
 <h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><h3 id="1-进入本地靶场"><a href="#1-进入本地靶场" class="headerlink" title="1. 进入本地靶场"></a>1. 进入本地靶场</h3><p>打开 Burp Suite 自带的浏览器，进入本地 Pikachu 靶场。</p>
@@ -428,6 +425,10 @@
 
 <p>访问保存路径后得到了 <code>UPLOAD_PROOF_OK</code>，说明服务器可以执行上传的内容。</p>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>服务器没有对上传文件进行有效验证，因此可以向服务器发送指令并让其中的代码执行。</p>
+<hr>
+<blockquote>
+<p>⚠️ <strong>免责声明：</strong> 本文仅用于个人学习与本地靶场演示，不针对任何真实网站或服务器。</p>
+</blockquote>
 
                 
               </div>
