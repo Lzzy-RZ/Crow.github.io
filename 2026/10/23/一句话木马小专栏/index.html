@@ -27,7 +27,7 @@
 <meta property="og:description" content="今天时间充足,效率也不错,在此梳理整理一下一句话木马的使用方法,以及如何防守 何为一句话木马:本质是一段极其简单的恶意脚本,以php为例,最经典的一句话木马如下: 1&lt;?php system($_GET[&#x27;cmd&#x27;]); ?&gt;  逐词解析:  &lt;?php ... ?&gt; 标识符,告诉服务器中间的内容请当做php代码来执行. system(...) php的">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-10-23T07:12:52.000Z">
-<meta property="article:modified_time" content="2026-10-23T08:31:58.371Z">
+<meta property="article:modified_time" content="2026-10-23T08:36:45.503Z">
 <meta property="article:author" content="Crow.">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="Web">
@@ -399,7 +399,7 @@
 <li><code>$_GET[&#39;cmd&#39;]</code> 用来接收参数(Hey bro,去浏览器的URL里找一个叫cmd的参数,把它的值拿过来)</li>
 </ul>
 <p>总结:就像遥控器一样,只要你通过URL里传入一个名为cmd的命令,服务器就会执行</p>
-<h2 id="关键1-找到地址"><a href="#关键1-找到地址" class="headerlink" title="关键1:找到地址"></a>关键1:找到地址</h2><p>Why:我们通过文件上传一句话木马后还不够,因为文件上传之后处于”休眠”状态,我们必须通过准确的URL路径访问,才能出发服务器的解析并执行代码.</p>
+<h2 id="关键1-找到地址"><a href="#关键1-找到地址" class="headerlink" title="关键1:找到地址"></a>关键1:找到地址</h2><p>Why:我们通过文件上传一句话木马后还不够,因为文件上传之后处于”休眠”状态,我们必须通过准确的URL路径访问,才能触发服务器的解析并执行代码.</p>
 <p>How:真实环境中服务器通常会重命名或移动上传文件,可以通过报错回显,目录扫描,或全盘搜索(grep)确认绝对路径,才能成功连接并控制服务器.(By the way,现在这些我都不会,keep going!)		错误路径会给404,路径正确会返回200</p>
 <h2 id="关键2-测试权限"><a href="#关键2-测试权限" class="headerlink" title="关键2:测试权限"></a>关键2:测试权限</h2><p>用?cmd&#x3D;whoami测试成功后,会返回用户名</p>
 <p>www-data&#x2F;apache&#x2F;nginx是web的普通员工权限,是绝大多数漏洞拿到的权限</p>
@@ -507,6 +507,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/Crow.github.io/2026/10/24/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%ABlocal/" title="文件包含local">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">文件包含local</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

