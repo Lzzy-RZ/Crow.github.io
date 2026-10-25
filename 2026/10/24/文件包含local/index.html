@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://github.com/user-attachments/assets/e9979318-2d49-4bbb-b0b4-e252553657f7">
 <meta property="og:image" content="https://github.com/user-attachments/assets/0b85db02-345a-4ca6-a2b0-1ab4e6998ccb">
 <meta property="article:published_time" content="2026-10-24T04:24:10.000Z">
-<meta property="article:modified_time" content="2026-10-24T09:14:21.983Z">
+<meta property="article:modified_time" content="2026-10-25T03:59:35.575Z">
 <meta property="article:author" content="Crow.">
 <meta property="article:tag" content="Curl">
 <meta property="article:tag" content="Web">
@@ -528,6 +528,50 @@
             </div>
 
             
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"Lzzy-RZ/Crow.github.io","repo-id":"R_kgDOVRyAiA","category":"Announcements","category-id":"DIC_kwDOVRyAiM4DJjqE","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"bottom","lang":"zh-CN","strict":0};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
           </article>
         </div>
       </div>
