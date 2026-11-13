@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>.htaccess小专栏</title>
+    <link href="/Crow.github.io/2026/11/13/htaccess%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <url>/Crow.github.io/2026/11/13/htaccess%E5%B0%8F%E4%B8%93%E6%A0%8F/</url>
+    
+    <content type="html"><![CDATA[<p>写在前面:今天打了一道.htaccess文件上传,问的接入Deepseek的Codex和Workbuddy,做题基本上是靠复制粘贴,重在理解概念,但是我发现这两个Agent似乎不太适合教学,到底是Agent,对话能力和教学能力还要好好训练一下.本来那篇文章写完,这个知识点就应该告一段落的,都怪我手欠,吃饭的时候问了Deepseek(对话版)一嘴,这下好了,不得不再更一篇博客,开始文章之前,给大家看看小鸟,过来蹭饭的,右上角那只不是我没拍好,是它不太配合[狗头]</p><img width="960" height="1280" alt="a599bfdf9488241640936de62dd6a282_720" src="https://github.com/user-attachments/assets/41ab18b7-f012-4445-9736-54a3b9fe2d2e" /><h2 id="为什么值得一写"><a href="#为什么值得一写" class="headerlink" title="为什么值得一写:"></a>为什么值得一写:</h2><p>.htaccess它的全称是Hypertext Access(超文本访问),是Apache服务器专属的一个配置文件,能放在特定的目录下.它的功能远远不止修改解析方式这么简单,还有改写规则(URL Rewrite),访问控制(设置密码,或禁止某些ip访问)(摘录于deepseek对话端)</p><h2 id="改写规则-URL-Rewrite"><a href="#改写规则-URL-Rewrite" class="headerlink" title="改写规则(URL Rewrite)"></a>改写规则(URL Rewrite)</h2><p>当我在手机上看见URL Rewrite时,条件反射想到了钓鱼网站和恶意跳转,于是追问了一嘴,果然,我联想对了,黑客可以通过.htaccess在后台重写用户访问的URL,但是用户看见的是他以为的官网</p><p>除此之外,还有别的阴招吗?有的兄弟&#x2F;姐妹,有的.黑客还可以利用它完成流量分发</p><h2 id="流量分发-Traffic-Filtering"><a href="#流量分发-Traffic-Filtering" class="headerlink" title="流量分发(Traffic Filtering)"></a>流量分发(Traffic Filtering)</h2><p>这个阴在,它可以躲过安全扫描器的查杀,然后将访问的用户领向钓鱼页面,黑客通过在.htaccess里面写规则,识别访问者的设备指纹,发现是安全扫描器的爬虫,,就返回404正常界面,发现是微信&#x2F;苹果的UA,就甩出钓鱼界面,这样的网站能够存活很久而不被封.</p><p>还有</p><h2 id="隐藏钓鱼文件-逃避溯源"><a href="#隐藏钓鱼文件-逃避溯源" class="headerlink" title="隐藏钓鱼文件(逃避溯源)"></a>隐藏钓鱼文件(逃避溯源)</h2><p>黑客将钓鱼文件改成没有意义的名字,用.htaccess告诉服务器,将这个文件用PHP来解析,从而实现隐藏后门,这样安全人员很难找到黑客执行的脚本(与在ctf题里将.php伪装成.png是同一个逻辑)</p><p>还有</p><h2 id="SEO劫持"><a href="#SEO劫持" class="headerlink" title="SEO劫持"></a>SEO劫持</h2><p>搜索引擎上看见的是正经文章,但是点进去就跳转到了”澳门赌场”,”诈骗网站”既实现了欺骗爬虫,又劫持了流量</p><h2 id="那么做为一个安全人员-目前来说-是未来的安全人员-我们应该怎么破局呢"><a href="#那么做为一个安全人员-目前来说-是未来的安全人员-我们应该怎么破局呢" class="headerlink" title="那么做为一个安全人员(目前来说,是未来的安全人员),我们应该怎么破局呢:"></a>那么做为一个安全人员(目前来说,是未来的安全人员),我们应该怎么破局呢:</h2><ul><li><strong>A,</strong> 直接摸文件:尝试直接访问<code>http://目标网站/.htaccess</code>如果浏览器能直接下载下来这个文件,那我们就拿到了黑客做的手脚,可以进一步分析</li><li><strong>B,</strong> 看流量走向:用浏览器的F12看网络请求(Network),看看有没有乱七八糟的跳转</li><li><strong>C,</strong> 修改UA测试:用Burpsuite抓包,将请求头的User-Agent改成Googlebot(谷歌爬虫),看看页面是不是换了个模样</li></ul><h2 id="如何规避漏洞"><a href="#如何规避漏洞" class="headerlink" title="如何规避漏洞:"></a>如何规避漏洞:</h2><ul><li><strong>A,</strong> 禁用规则覆盖,禁止用户自定义.htaccess</li><li><strong>B,</strong> 拦截特殊文件:在WAF或后端代码中,直接禁止上传任何以.开头的文件</li></ul><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Web安全</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Web</tag>
+      
+      <tag>小专栏</tag>
+      
+      <tag>Apache</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>文件上传(.htaccess)</title>
     <link href="/Crow.github.io/2026/11/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-htaccess/"/>
     <url>/Crow.github.io/2026/11/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-htaccess/</url>
