@@ -1,0 +1,935 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/Crow.github.io/img/fluid.png">
+  <link rel="icon" href="/Crow.github.io/img/fluid.png">
+  
+    <link rel="canonical" href="https://lzzy-rz.github.io/Crow.github.io/2026/11/14/文件上传-00截断/"/>
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Crow.">
+  <meta name="keywords" content="网络安全,CTF,Web安全,文件上传,文件包含,文件下载,信息读取,WebShell">
+  
+    <meta name="description" content="工具:Burpsuite 环境:Ctfhub靶场 内容:用00截断夺旗 原理: C 语言（PHP 底层是 C）里，字符串遇到 \0（空字符）就认为结束了。后端程序检查时，看到了你传的 shell.php%00.jpg，觉得是个安全的图片；但保存到硬盘时，系统读到 %00 就一刀切断了，实际存下来的名字变成了 shell.php。 %00 直接在 URL 或表单里传，浏览器往往会自动把它忽略或者转码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件上传(00截断)">
+<meta property="og:url" content="https://lzzy-rz.github.io/Crow.github.io/2026/11/14/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-00%E6%88%AA%E6%96%AD/index.html">
+<meta property="og:site_name" content="Crow.">
+<meta property="og:description" content="工具:Burpsuite 环境:Ctfhub靶场 内容:用00截断夺旗 原理: C 语言（PHP 底层是 C）里，字符串遇到 \0（空字符）就认为结束了。后端程序检查时，看到了你传的 shell.php%00.jpg，觉得是个安全的图片；但保存到硬盘时，系统读到 %00 就一刀切断了，实际存下来的名字变成了 shell.php。 %00 直接在 URL 或表单里传，浏览器往往会自动把它忽略或者转码">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/user-attachments/assets/20bf1259-67c3-4218-9a8a-07e8d6283125">
+<meta property="og:image" content="https://github.com/user-attachments/assets/8bc53bd3-d7a9-466d-b4d8-fc27765d1d41">
+<meta property="og:image" content="https://github.com/user-attachments/assets/5e85fb01-3fcf-4800-a5a6-b3ce360e7905">
+<meta property="og:image" content="https://github.com/user-attachments/assets/c59ab374-8e18-48da-a667-c84e47e4f1a7">
+<meta property="og:image" content="https://github.com/user-attachments/assets/e7108193-97f2-4b33-98ee-647cb6f25a89">
+<meta property="og:image" content="https://github.com/user-attachments/assets/3a9d2c00-5bd5-4248-9b0c-8f94fda99e23">
+<meta property="og:image" content="https://github.com/user-attachments/assets/5744d83c-6a8c-4260-8732-0149db7bf3c2">
+<meta property="og:image" content="https://github.com/user-attachments/assets/056a2a5a-8bed-486d-8a25-c0cd0f75e3a7">
+<meta property="og:image" content="https://github.com/user-attachments/assets/983adf6a-4a19-4956-a588-50765e1c2893">
+<meta property="og:image" content="https://github.com/user-attachments/assets/9de77eb1-288e-4b2e-90bb-93858dfa967d">
+<meta property="og:image" content="https://github.com/user-attachments/assets/703ec47b-cb44-4069-a97d-315c1a6dc63b">
+<meta property="og:image" content="https://github.com/user-attachments/assets/3634f0e1-5623-4696-a4d8-cb9594e9407d">
+<meta property="og:image" content="https://github.com/user-attachments/assets/bac6822d-8f83-4b42-ad9a-a77a1139b11e">
+<meta property="article:published_time" content="2026-11-14T15:07:31.000Z">
+<meta property="article:modified_time" content="2026-11-14T15:48:02.188Z">
+<meta property="article:author" content="Crow.">
+<meta property="article:tag" content="Burp Suite">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="文件上传">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://github.com/user-attachments/assets/20bf1259-67c3-4218-9a8a-07e8d6283125">
+  
+  
+  
+    <link rel="alternate" type="application/atom+xml" title="Crow." href="/Crow.github.io/atom.xml">
+  
+  <title>文件上传(00截断) - Crow.</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/Crow.github.io/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/Crow.github.io/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/Crow.github.io/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/Crow.github.io/css/article-images.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"lzzy-rz.github.io","root":"/Crow.github.io/","version":"1.9.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"expand_all":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"openkounter":{"server_url":"https://open-kounter.mintimate.cn","path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/Crow.github.io/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/Crow.github.io/js/utils.js" ></script>
+  <script  src="/Crow.github.io/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/Crow.github.io/">
+      <strong>Crow.</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content (desktop) -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/Crow.github.io/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile grid menu overlay -->
+<div id="mobile-grid-menu" class="d-lg-none">
+  <div class="mobile-grid-menu-inner">
+    <div class="container">
+      <div class="row">
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-home-fill"></i>
+                  <span>首页</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/archives/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-archive-fill"></i>
+                  <span>归档</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/categories/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-category-fill"></i>
+                  <span>分类</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/tags/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-tags-fill"></i>
+                  <span>标签</span>
+                </div>
+              </a>
+            </div>
+          
+        
+          
+          
+          
+          
+            <div class="col-4 mobile-grid-cell">
+              <a href="/Crow.github.io/about/" target="_self">
+                <div class="mobile-grid-item">
+                  <i class="iconfont icon-user-fill"></i>
+                  <span>关于</span>
+                </div>
+              </a>
+            </div>
+          
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-search-btn">
+            <a href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-search"></i>
+                <span>搜索</span>
+              </div>
+            </a>
+          </div>
+        
+        
+          <div class="col-4 mobile-grid-cell" id="mobile-color-toggle-btn"
+               data-label-light="开灯"
+               data-label-dark="关灯">
+            <a href="javascript:;" aria-label="Color Toggle">
+              <div class="mobile-grid-item">
+                <i class="iconfont icon-dark" id="mobile-color-toggle-icon"></i>
+                <span id="mobile-color-toggle-label">关灯</span>
+              </div>
+            </a>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/Crow.github.io/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="文件上传(00截断)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-11-14 23:07" pubdate>
+          2026年11月14日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          943 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          8 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">文件上传(00截断)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>工具:Burpsuite</p>
+<p>环境:Ctfhub靶场</p>
+<p>内容:用00截断夺旗</p>
+<p>原理:</p>
+<p>C 语言（PHP 底层是 C）里，字符串遇到 <code>\0</code>（空字符）就认为结束了。后端程序检查时，看到了你传的 <code>shell.php%00.jpg</code>，觉得是个安全的图片；但保存到硬盘时，系统读到 <code>%00</code> 就一刀切断了，实际存下来的名字变成了 <code>shell.php</code>。</p>
+<p><code>%00</code> 直接在 URL 或表单里传，浏览器往往会自动把它忽略或者转码，所以我们必须在 Burp Suite 里抓包改包</p>
+<h2 id="1-进入环境-准备好后缀为-php-jpg的一句话木马"><a href="#1-进入环境-准备好后缀为-php-jpg的一句话木马" class="headerlink" title="1,进入环境,准备好后缀为.php.jpg的一句话木马"></a>1,进入环境,准备好后缀为.php.jpg的一句话木马</h2><h2 id="2-用Burp拦截"><a href="#2-用Burp拦截" class="headerlink" title="2,用Burp拦截"></a>2,用Burp拦截</h2><p>这里可以看到我们用的是Post请求,在Post请求中直接改直接改filename会无效,%00会被当做普通字符,所以我们需要用 Hex 模式</p>
+<img width="2480" height="1460" alt="2539e8332433a590914c5a991ae47007" src="https://github.com/user-attachments/assets/20bf1259-67c3-4218-9a8a-07e8d6283125" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<h2 id="3-将-jpg的-变成-00"><a href="#3-将-jpg的-变成-00" class="headerlink" title="3,将.jpg的.变成%00"></a>3,将.jpg的.变成%00</h2><p>用Hex,切换到16进制视图</p>
+<img width="1324" height="368" alt="b09758520cfa8a681a9b4064463616eb" src="https://github.com/user-attachments/assets/8bc53bd3-d7a9-466d-b4d8-fc27765d1d41" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>在左边的面板里点击16进制代码,会在右边标灰对应的字符,这里我们找到了.jpg的点.</p>
+<img width="1448" height="364" alt="3e44f5b1070275b374efb09ff311182f" src="https://github.com/user-attachments/assets/5e85fb01-3fcf-4800-a5a6-b3ce360e7905" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>在右侧面板将2e改成00</p>
+<img width="430" height="360" alt="a6d91be7405d16108d2611af200d8da5" src="https://github.com/user-attachments/assets/c59ab374-8e18-48da-a667-c84e47e4f1a7" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>放行后显示上传成功</p>
+<img width="2484" height="1470" alt="c85081e6fea14ce11b8494b645614b50" src="https://github.com/user-attachments/assets/e7108193-97f2-4b33-98ee-647cb6f25a89" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<h2 id="4-调用一下"><a href="#4-调用一下" class="headerlink" title="4,调用一下"></a>4,调用一下</h2><p>我们去访问目录的时候显示路径不存在</p>
+<img width="2482" height="1426" alt="847bdd5b828face55048a0aa2643d528" src="https://github.com/user-attachments/assets/3a9d2c00-5bd5-4248-9b0c-8f94fda99e23" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>这就很诡异了,会不会是文件没传上去,于是我重新上传了三遍文件,都显示上传失败,那就果断放弃,每次刷新网页的时候都会出这个提示,可能是这个环境有问题.</p>
+<img width="2474" height="1450" alt="e6983764f7dd93b484dc027f156774bf" src="https://github.com/user-attachments/assets/5744d83c-6a8c-4260-8732-0149db7bf3c2" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<h2 id="5-换招-改第一个请求行"><a href="#5-换招-改第一个请求行" class="headerlink" title="5,换招:改第一个请求行"></a>5,换招:改第一个请求行</h2><p>首先先把一句话木马的后缀改成.jpg,将请求行改成这个</p>
+<img width="974" height="50" alt="8edd8162821f0e6df0715a8f9d688cb6" src="https://github.com/user-attachments/assets/056a2a5a-8bed-486d-8a25-c0cd0f75e3a7" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>右键选中%00    Convert selection -&gt; URL -&gt; URL-decode</p>
+<img width="776" height="934" alt="333e6cb0c94636640f41b40b45fd54cf" src="https://github.com/user-attachments/assets/983adf6a-4a19-4956-a588-50765e1c2893" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>上传返回400</p>
+<p>查资料发现:HTTP 协议规定，URL 里绝对不能出现真正的“空字符”（那个小方块）。底层的 Web 服务器（OpenResty&#x2F;Nginx）一看到 URL 里有个空字符，当场就觉得“这请求是个畸形的怪物”，直接给你返回 400 Bad Request，连后端的 PHP 都没碰到。</p>
+<p>仅改第一行:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">POST /?road=/var/www/html/upload/shell.php%00 HTTP/1.1<br></code></pre></td></tr></table></figure>
+
+<p>上传成功</p>
+<img width="2484" height="1338" alt="a4860f8a43d91a8f861e59e8da80806b" src="https://github.com/user-attachments/assets/9de77eb1-288e-4b2e-90bb-93858dfa967d" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<h2 id="6-catch-the-flag"><a href="#6-catch-the-flag" class="headerlink" title="6.catch the flag"></a>6.catch the flag</h2><p>Ctfhb的flag格式固定,直接Grep</p>
+<img width="2480" height="1434" alt="980cae72ad86d26d571d433a197f4958" src="https://github.com/user-attachments/assets/703ec47b-cb44-4069-a97d-315c1a6dc63b" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>发现了flag所在的文件,直接cat,返回空白</p>
+<img width="2482" height="1456" alt="18fffcbf793f7d3fdafb99172c36e25b" src="https://github.com/user-attachments/assets/3634f0e1-5623-4696-a4d8-cb9594e9407d" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>这次不用base64了,直接Ctrl+U查看网页源码</p>
+<img width="2478" height="1188" alt="16240e2d796c96941b03106be75aded2" src="https://github.com/user-attachments/assets/bac6822d-8f83-4b42-ad9a-a77a1139b11e" srcset="/Crow.github.io/img/loading.gif" lazyload />
+
+<p>成功拿到flag</p>
+<hr>
+<p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" class="category-chain-item">文件上传</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/Crow.github.io/tags/CTF/" class="print-no-link">#CTF</a>
+      
+        <a href="/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" class="print-no-link">#文件上传</a>
+      
+        <a href="/Crow.github.io/tags/Burp-Suite/" class="print-no-link">#Burp Suite</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>文件上传(00截断)</div>
+      <div>https://lzzy-rz.github.io/Crow.github.io/2026/11/14/文件上传-00截断/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Crow.</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年11月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/Crow.github.io/2026/11/13/htaccess%E5%B0%8F%E4%B8%93%E6%A0%8F/" title=".htaccess小专栏">
+                        <span class="hidden-mobile">.htaccess小专栏</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"Lzzy-RZ/Crow.github.io","repo-id":"R_kgDOVRyAiA","category":"Announcements","category-id":"DIC_kwDOVRyAiM4DJjQE","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"bottom","lang":"zh-CN","strict":0};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://github.com/Lzzy-RZ" target="_blank" rel="noopener"><i class="iconfont icon-github-fill"></i> GitHub</a> <span class="mx-2">·</span> <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/Crow.github.io/js/events.js" ></script>
+<script  src="/Crow.github.io/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/Crow.github.io/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    function isExpandAllEnabled() {
+      return CONFIG.toc && CONFIG.toc.expand_all === true;
+    }
+    function expandAllToc() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .tocbot-is-collapsed').removeClass('tocbot-is-collapsed');
+    }
+    function updateTocToggle($li, $childList) {
+      var $toggle = $li.children('.toc-toggle');
+      if ($toggle.length === 0) { return; }
+      var collapsed = $childList.hasClass('tocbot-is-collapsed');
+      $toggle
+        .toggleClass('toc-toggle-collapsed', collapsed)
+        .toggleClass('toc-toggle-expanded', !collapsed);
+    }
+    function bindTocToggle() {
+      if (!isExpandAllEnabled()) { return; }
+      jQuery('#toc-body .toc-list-item').each(function() {
+        var $li = jQuery(this);
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) {
+          if ($li.children('.toc-toggle').length === 0) {
+            $li.prepend('<span class="toc-toggle toc-toggle-placeholder" aria-hidden="true">›</span>');
+          }
+          return;
+        }
+
+        if ($li.children('.toc-toggle').length === 0) {
+          $li.prepend('<span class="toc-toggle toc-toggle-expanded" aria-hidden="true">›</span>');
+        }
+        updateTocToggle($li, $childList);
+      });
+      jQuery('#toc-body').off('click.tocToggle').on('click.tocToggle', '.toc-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $li = jQuery(this).parent('.toc-list-item');
+        var $childList = $li.children('ol');
+        if ($childList.length === 0) { return; }
+        $childList.toggleClass('tocbot-is-collapsed');
+        updateTocToggle($li, $childList);
+      });
+      if (!window.__tocToggleObserver) {
+        window.__tocToggleObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type !== 'attributes' || mutation.attributeName !== 'class') { return; }
+            var $list = jQuery(mutation.target);
+            var $li = $list.parent('.toc-list-item');
+            if ($li.length === 0) { return; }
+            updateTocToggle($li, $list);
+          });
+        });
+        jQuery('#toc-body ol').each(function() {
+          window.__tocToggleObserver.observe(this, { attributes: true });
+        });
+      }
+    }
+    var tocConfig = Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc);
+    if (isExpandAllEnabled()) {
+      tocConfig.collapseDepth = 6;
+    }
+    window.tocbot.init(tocConfig);
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+    expandAllToc();
+    bindTocToggle();
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+        expandAllToc();
+        bindTocToggle();
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/Crow.github.io/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/Crow.github.io/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

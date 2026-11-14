@@ -344,6 +344,71 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/Crow.github.io/2026/11/14/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-00%E6%88%AA%E6%96%AD/" target="_self">
+          文件上传(00截断)
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/11/14/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-00%E6%88%AA%E6%96%AD/" target="_self">
+        <div>
+          工具:Burpsuite 环境:Ctfhub靶场 内容:用00截断夺旗 原理: C 语言（PHP 底层是 C）里，字符串遇到 \0（空字符）就认为结束了。后端程序检查时，看到了你传的 shell.php%00.jpg，觉得是个安全的图片；但保存到硬盘时，系统读到 %00 就一刀切断了，实际存下来的名字变成了 shell.php。 %00 直接在 URL 或表单里传，浏览器往往会自动把它忽略或者转码
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-11-14 23:07" pubdate>
+              2026-11-14
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" class="category-chain-item">文件上传</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/Crow.github.io/tags/CTF/">#CTF</a>
+            
+              <a href="/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">#文件上传</a>
+            
+              <a href="/Crow.github.io/tags/Burp-Suite/">#Burp Suite</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/Crow.github.io/2026/11/13/htaccess%E5%B0%8F%E4%B8%93%E6%A0%8F/" target="_self">
           .htaccess小专栏
         </a>
@@ -933,74 +998,13 @@
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/" target="_self">
-          文件上传(client check)
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/21/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0File-Inclusion-local-2026-10-21/" target="_self">
-        <div>
-          工具:Burpsuite,Curl 环境:本地 Pikachu 靶场 内容:挖掘文件上传client check的漏洞 原理:用户选择文件时,会检查文件扩展名,选择其他类型文件时,浏览器的JS就已经拦截了(请求没发送出去),所以采用用图片后缀的方式,绕过浏览器的拦截,让它成功发送请求.我们拦截发送的请求,并将伪装过的文件换回原来的后缀,发送给服务器.如果服务器没有拦截,并且能执行我们上传的代码,说
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2026-10-21 17:54" pubdate>
-              2026-10-21
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" class="category-chain-item">文件上传</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">#文件上传</a>
-            
-              <a href="/Crow.github.io/tags/Curl/">#Curl</a>
-            
-              <a href="/Crow.github.io/tags/Pikachu/">#Pikachu</a>
-            
-              <a href="/Crow.github.io/tags/Burp-Suite/">#Burp Suite</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
 
 
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/Crow.github.io/page/2/#board">2</a><a class="extend next" rel="next" href="/Crow.github.io/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
 
 
 
