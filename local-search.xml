@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>文件上传(双写后缀)</title>
+    <link href="/Crow.github.io/2026/11/15/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E5%8F%8C%E5%86%99%E5%90%8E%E7%BC%80/"/>
+    <url>/Crow.github.io/2026/11/15/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E5%8F%8C%E5%86%99%E5%90%8E%E7%BC%80/</url>
+    
+    <content type="html"><![CDATA[<p>工具:Burpsuite</p><p>环境:Ctfhub本地靶场</p><p>内容:通过双写后缀漏洞来夺旗</p><p>原理:</p><p>程序员为了防止你传木马，写了一段代码，只要看到文件名里有 <code>.php</code>，就把它删掉。但是,他写的代码比较笨，只删一次。如果你传 <code>shell.php</code>，它把你删成了 <code>shell.</code>；但如果你传 <code>shell.pphphp</code>，它删掉中间那个 <code>.php</code> 后，剩下的刚好拼成了 <code>shell.php</code>.</p><h2 id="1-进入靶场打开Burpsuite"><a href="#1-进入靶场打开Burpsuite" class="headerlink" title="1,进入靶场打开Burpsuite"></a>1,进入靶场打开Burpsuite</h2><img width="2478" height="1472" alt="38f38da64aac50cc076317db52b15ab4" src="https://github.com/user-attachments/assets/3e97ff57-2a04-4f21-a812-168d49148e69" /><h2 id="2-打开interscept然后上传一句话木马"><a href="#2-打开interscept然后上传一句话木马" class="headerlink" title="2,打开interscept然后上传一句话木马"></a>2,打开interscept然后上传一句话木马</h2><img width="2482" height="1266" alt="1ed1fa0eb73bbe56a215c34ab18c4445" src="https://github.com/user-attachments/assets/de2c88fc-e55b-4717-ba75-4277cf6fa846" /><h2 id="3-在拦到的包里将filename里的-php改成-pphphp"><a href="#3-在拦到的包里将filename里的-php改成-pphphp" class="headerlink" title="3,在拦到的包里将filename里的.php改成.pphphp"></a>3,在拦到的包里将filename里的.php改成.pphphp</h2><img width="614" height="44" alt="8ca35cbf6af39191469103190ffe8d32" src="https://github.com/user-attachments/assets/5e561d96-d7c2-43c0-9386-a4085bb6f5cf" /><h2 id="4-放行"><a href="#4-放行" class="headerlink" title="4,放行"></a>4,放行</h2><p>显示上传成功</p><img width="2488" height="1348" alt="7912f1aef6c911acc7ea1a4a5e55b913" src="https://github.com/user-attachments/assets/45f8493f-6a94-4087-b865-6c8271ea4bda" /><p>并返回了路径</p><img width="2478" height="1262" alt="39aa31455a8d63cd1e5838999c6fef98" src="https://github.com/user-attachments/assets/cd811b47-1e33-4e6a-8877-a262a23903e5" /><h2 id="5-看目录"><a href="#5-看目录" class="headerlink" title="5,看目录"></a>5,看目录</h2><img width="2482" height="1226" alt="fc4ade23490b2ea02ffbac5731439c5a" src="https://github.com/user-attachments/assets/4de83555-1bbe-4f11-9d7f-802811ab5fbe" /><h2 id="6-找flag所在的文件"><a href="#6-找flag所在的文件" class="headerlink" title="6,找flag所在的文件"></a>6,找flag所在的文件</h2><img width="2492" height="1344" alt="a2c42f578dad42552752b811d6783c69" src="https://github.com/user-attachments/assets/9002e602-6149-4ef8-b6b0-bb0c0d758ca5" /><h2 id="7-cat-the-flag-Ctrl-U"><a href="#7-cat-the-flag-Ctrl-U" class="headerlink" title="7,cat the flag,Ctrl+ U"></a>7,cat the flag,Ctrl+ U</h2><img width="2484" height="1094" alt="577ef5878ffd931d910970d4f2c68791" src="https://github.com/user-attachments/assets/c67cd2f7-e40b-47be-9540-f01c66622fa0" /><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>文件上传</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CTF</tag>
+      
+      <tag>文件上传</tag>
+      
+      <tag>Burp Suite</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>文件上传(00截断)</title>
     <link href="/Crow.github.io/2026/11/14/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-00%E6%88%AA%E6%96%AD/"/>
     <url>/Crow.github.io/2026/11/14/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-00%E6%88%AA%E6%96%AD/</url>
