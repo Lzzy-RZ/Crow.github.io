@@ -344,6 +344,71 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h2 class="index-header">
         
+        <a href="/Crow.github.io/2026/11/17/XSS%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/" target="_self">
+          XSS基本原理
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/11/17/XSS%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/" target="_self">
+        <div>
+          工具:Internet 环境:本机 内容:简单梳理一下XSS的知识,给后面的学习铺路 1,XSS的本质网站的输入框很多是’模板+用户输入’拼接出来的,如果该转义的地方没转义,黑客输入的&lt;,”这类字符,或者&lt;script&gt;这类标签,就原样进入了网页的HTML,浏览器解析后就会执行.除了输入框,还有参数,URL,留言,这些也是注入点 2,攻击对象浏览器,黑客把payload拼进URL
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-11-17 15:36" pubdate>
+              2026-11-17
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/Crow.github.io/categories/XSS/" class="category-chain-item">XSS</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/Crow.github.io/tags/XSS/">#XSS</a>
+            
+              <a href="/Crow.github.io/tags/CTF/">#CTF</a>
+            
+              <a href="/Crow.github.io/tags/Web/">#Web</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h2 class="index-header">
+        
         <a href="/Crow.github.io/2026/11/15/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E5%8F%8C%E5%86%99%E5%90%8E%E7%BC%80/" target="_self">
           文件上传(双写后缀)
         </a>
@@ -651,11 +716,11 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
+              <a href="/Crow.github.io/tags/CTF/">#CTF</a>
+            
               <a href="/Crow.github.io/tags/Web/">#Web</a>
             
               <a href="/Crow.github.io/tags/%E5%B0%8F%E4%B8%93%E6%A0%8F/">#小专栏</a>
-            
-              <a href="/Crow.github.io/tags/CTF/">#CTF</a>
             
               <a href="/Crow.github.io/tags/%E4%BF%A1%E6%81%AF%E8%AF%BB%E5%8F%96/">#信息读取</a>
             
@@ -915,80 +980,13 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/Crow.github.io/tags/Web/">#Web</a>
-            
               <a href="/Crow.github.io/tags/CTF/">#CTF</a>
+            
+              <a href="/Crow.github.io/tags/Web/">#Web</a>
             
               <a href="/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">#文件上传</a>
             
               <a href="/Crow.github.io/tags/WebShell/">#WebShell</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/" target="_self">
-          文件上传(getimagesize)
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt index-excerpt__noimg" href="/Crow.github.io/2026/10/23/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-getimagesize/" target="_self">
-        <div>
-          工具:curl 环境:本地 Pikachu 靶场 内容:验证getimagesize可绕过 原理:getimagesize() 的核心是：不相信文件名,也不相信 Content-Type,而是自己读文件内容.服务器会把上传后的临时文件交给它，它会去找图片的真实结构,如果把一个真正的 PNG 放在前面，再在尾部塞一段 PHP，就可能做成“图片马”，让图片检查通过、PHP 也跟着落盘 1,进入本地靶场
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2026-10-23 13:49" pubdate>
-              2026-10-23
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" class="category-chain-item">文件上传</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">#文件上传</a>
-            
-              <a href="/Crow.github.io/tags/Curl/">#Curl</a>
-            
-              <a href="/Crow.github.io/tags/getimagesize/">#getimagesize</a>
-            
-              <a href="/Crow.github.io/tags/Pikachu/">#Pikachu</a>
             
           </div>
         

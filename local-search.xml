@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>XSS基本原理</title>
+    <link href="/Crow.github.io/2026/11/17/XSS%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/"/>
+    <url>/Crow.github.io/2026/11/17/XSS%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</url>
+    
+    <content type="html"><![CDATA[<p>工具:Internet</p><p>环境:本机</p><p>内容:简单梳理一下XSS的知识,给后面的学习铺路</p><h2 id="1-XSS的本质"><a href="#1-XSS的本质" class="headerlink" title="1,XSS的本质"></a>1,XSS的本质</h2><p>网站的输入框很多是’模板+用户输入’拼接出来的,如果该转义的地方没转义,黑客输入的<code>&lt;</code>,”这类字符,或者<code>&lt;script&gt;</code>这类标签,就原样进入了网页的HTML,浏览器解析后就会执行.除了输入框,还有参数,URL,留言,这些也是注入点</p><h2 id="2-攻击对象"><a href="#2-攻击对象" class="headerlink" title="2,攻击对象"></a>2,攻击对象</h2><p>浏览器,黑客把payload拼进URL,并将URL传播,只要用户点击访问这个URL,服务器就把带着payload的HTML发出去,让用户的浏览器执行,从而得到用户的Cookie,会话,页面操作权.</p><h2 id="3-三种类型"><a href="#3-三种类型" class="headerlink" title="3,三种类型"></a>3,三种类型</h2><ul><li><strong>A,反射型:</strong> 输入在URL的参数里,服务器原样拼进返回界面,不落库,每次靠链接诱导点击,是一次性的</li><li><strong>B,存储型:</strong> 输入存进数据库(留言,昵称,评论),页面渲染时再读出来,拼进去,任何人只要此页面就会中招,不用点特定链接,危害最大</li><li><strong>C,DOM型:</strong> payload不经过服务器,在URL里.服务器返回的HTML永远是同一份,里面有一段JS,这段JS会去读location.hash(#后面的部分)或者location.search(?后面的部分),然后把读到的内容塞进innerHTML,document.write,eval这类地方.因为服务器发的HTML是同一份,所以抓包看不见有用回显</li></ul><h2 id="4-防御"><a href="#4-防御" class="headerlink" title="4,防御"></a>4,防御</h2><ul><li><strong>A,将编码输出:</strong> 把<code>&lt;&gt;&#39;&quot;&amp;</code>转成实体</li><li><strong>B,输入校验:</strong> 做白名单或黑名单</li><li><strong>C,CSP:</strong> 用响应头限制脚本只能从哪些源加载,inline script默认不执行</li><li><strong>D,HttpOnly:</strong> 将Cookie加上这个标记,JS读不到document.cookie,偷不到会话.它防不了XSS本身,但是能砍掉关键信息,避免被盗</li><li><strong>E,框架默认转义:</strong> Vue,React默认转义,除非用v-html,dangerouslySetInnerHTML这类口子</li></ul><h2 id="5-CTF中XSS的题型"><a href="#5-CTF中XSS的题型" class="headerlink" title="5,CTF中XSS的题型"></a>5,CTF中XSS的题型</h2><ul><li><strong>A,考找注入点和闭合</strong></li><li><strong>B,过滤绕过:</strong> 遇到过滤–&gt;大小写,双写,编码</li><li><strong>C,存储型:</strong> 比如留言板,提交后管理员会来看,常见的是盗管理员的Cookie</li><li><strong>D,DOM型:</strong> 找sink,payload,抓包看不到</li><li><strong>E,XSS盲打:</strong> 没回显,得挂个接收端,等管理员访问回连</li><li><strong>F,结合CSRF:</strong> 借XSS发请求改密码,添加自己为管理员</li></ul><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>XSS</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>XSS</tag>
+      
+      <tag>CTF</tag>
+      
+      <tag>Web</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>文件上传(双写后缀)</title>
     <link href="/Crow.github.io/2026/11/15/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E5%8F%8C%E5%86%99%E5%90%8E%E7%BC%80/"/>
     <url>/Crow.github.io/2026/11/15/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0-%E5%8F%8C%E5%86%99%E5%90%8E%E7%BC%80/</url>
@@ -136,11 +165,11 @@
     
     <tags>
       
+      <tag>CTF</tag>
+      
       <tag>Web</tag>
       
       <tag>小专栏</tag>
-      
-      <tag>CTF</tag>
       
       <tag>信息读取</tag>
       
@@ -256,9 +285,9 @@
     
     <tags>
       
-      <tag>Web</tag>
-      
       <tag>CTF</tag>
+      
+      <tag>Web</tag>
       
       <tag>文件上传</tag>
       
