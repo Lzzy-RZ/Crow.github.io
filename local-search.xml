@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>梳理现阶段常见的Webshell</title>
+    <link href="/Crow.github.io/2026/11/18/%E6%A2%B3%E7%90%86%E7%8E%B0%E9%98%B6%E6%AE%B5%E5%B8%B8%E8%A7%81%E7%9A%84Webshell/"/>
+    <url>/Crow.github.io/2026/11/18/%E6%A2%B3%E7%90%86%E7%8E%B0%E9%98%B6%E6%AE%B5%E5%B8%B8%E8%A7%81%E7%9A%84Webshell/</url>
+    
+    <content type="html"><![CDATA[<p>工具:</p><p>环境:</p><p>内容:</p><p>原理:</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>XSS基本原理</title>
     <link href="/Crow.github.io/2026/11/17/XSS%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/"/>
     <url>/Crow.github.io/2026/11/17/XSS%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</url>
@@ -22,9 +35,9 @@
       
       <tag>Web</tag>
       
-      <tag>CTF</tag>
-      
       <tag>XSS</tag>
+      
+      <tag>CTF</tag>
       
     </tags>
     
@@ -269,9 +282,9 @@
   
   
   <entry>
-    <title>一句话木马小专栏</title>
-    <link href="/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
-    <url>/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/</url>
+    <title>一句话木马(cmd型)小专栏</title>
+    <link href="/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC(cmd%E5%9E%8B)%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <url>/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC(cmd%E5%9E%8B)%E5%B0%8F%E4%B8%93%E6%A0%8F/</url>
     
     <content type="html"><![CDATA[<p>今天时间充足,效率也不错,在此梳理整理一下一句话木马的使用方法,以及如何防守</p><h2 id="何为一句话木马"><a href="#何为一句话木马" class="headerlink" title="何为一句话木马:"></a>何为一句话木马:</h2><p>本质是一段极其简单的恶意脚本,以php为例,最经典的一句话木马如下:</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>逐词解析:</p><ul><li><code>&lt;?php ... ?&gt;</code> 标识符,告诉服务器中间的内容请当做php代码来执行.</li><li><code>system(...)</code> php的内置函数,作用是执行系统底层命令</li><li><code>$_GET[&#39;cmd&#39;]</code> 用来接收参数(Hey bro,去浏览器的URL里找一个叫cmd的参数,把它的值拿过来)</li></ul><p>总结:就像遥控器一样,只要你通过URL里传入一个名为cmd的命令,服务器就会执行</p><h2 id="关键1-找到地址"><a href="#关键1-找到地址" class="headerlink" title="关键1:找到地址"></a>关键1:找到地址</h2><p>Why:我们通过文件上传一句话木马后还不够,因为文件上传之后处于”休眠”状态,我们必须通过准确的URL路径访问,才能触发服务器的解析并执行代码.</p><p>How:真实环境中服务器通常会重命名或移动上传文件,可以通过报错回显,目录扫描,或全盘搜索(grep)确认绝对路径,才能成功连接并控制服务器.(By the way,现在这些我都不会,keep going!)错误路径会给404,路径正确会返回200</p><h2 id="关键2-测试权限"><a href="#关键2-测试权限" class="headerlink" title="关键2:测试权限"></a>关键2:测试权限</h2><p>用?cmd&#x3D;whoami测试成功后,会返回用户名</p><p>www-data&#x2F;apache&#x2F;nginx是web的普通员工权限,是绝大多数漏洞拿到的权限</p><p>root是最高统帅,可以让整个系统想干嘛干嘛.</p><h2 id="关健3-调用指令"><a href="#关健3-调用指令" class="headerlink" title="关健3:调用指令"></a>关健3:调用指令</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">1,看根目录: ?cmd=ls /<br>2,看当前目录: ?cmd=ls<br>3,找到可以文件后读取: ?cmd=cat /flag.txt<br></code></pre></td></tr></table></figure><p>*在ctf中如果是空白页,可以尝试用base64强转,再去解码</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">?cmd=base64 /flag_xxx.php<br></code></pre></td></tr></table></figure><h2 id="4-防守策略"><a href="#4-防守策略" class="headerlink" title="4:防守策略"></a>4:防守策略</h2><p>1,禁用危险函数<br>2,严格校验文件上传:MIME类型,文件后缀,文件头<br>3,重命名文件</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
     
@@ -349,9 +362,9 @@
       
       <tag>文件上传</tag>
       
-      <tag>Burp Suite</tag>
-      
       <tag>Pikachu</tag>
+      
+      <tag>Burp Suite</tag>
       
       <tag>MIME</tag>
       
@@ -380,11 +393,11 @@
       
       <tag>文件上传</tag>
       
-      <tag>Burp Suite</tag>
-      
       <tag>Curl</tag>
       
       <tag>Pikachu</tag>
+      
+      <tag>Burp Suite</tag>
       
     </tags>
     

